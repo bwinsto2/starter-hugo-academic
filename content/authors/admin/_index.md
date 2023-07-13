@@ -1,7 +1,7 @@
 ---
 title: Brian Winston
 role: PhD Student in Psychological and Brain Sciences
-avatar_filename: img_2923.jpg
+avatar_filename: avatar.jpg
 bio: My research interests include distributed robotics, mobile computing and
   programmable matter.
 interests:
