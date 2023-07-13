@@ -22,17 +22,13 @@ sections:
     design:
       columns: '2'
       view: card
-  - block: collection
+  - block: markdown
     id: posters
     content:
       title: Featured Posters
-      filters:
-        folders:
-          - poster
-        featured_only: true
-    design:
-      columns: '2'
-      view: card
+      subtitle: ''
+      text: |-
+      {{< gallery album="demo" >}}
   - block: collection
     id: SciComm
     content:
