@@ -5,9 +5,9 @@ avatar_filename: img_2923.jpg
 bio: My research interests include distributed robotics, mobile computing and
   programmable matter.
 interests:
-  - Artificial Intelligence
-  - Computational Linguistics
-  - Information Retrieval
+  - Psychedelics
+  - Cognitive Neuroscience
+  - Aging/Longevity
 social:
   - icon: envelope
     icon_pack: fas
@@ -32,23 +32,22 @@ organizations:
     url: ""
 education:
   courses:
-    - course: PhD in Artificial Intelligence
-      institution: Stanford University
-      year: 2012
-    - course: MEng in Artificial Intelligence
-      institution: Massachusetts Institute of Technology
-      year: 2009
-    - course: BSc in Artificial Intelligence
-      institution: Massachusetts Institute of Technology
-      year: 2008
+    - course: PhD in Psychological and Brain Sciences
+      institution: Johns Hopkins University
+      year: 2022-present
+    - course: B.A. in Philosophy, Neuroscience, and Psychology
+      institution: Washington University in St. Louis
+      year: 2019
 superuser: true
 status:
   icon: ☕️
-last_name: Wu
+last_name: Winston
 highlight_name: true
-first_name: Alice
+first_name: Brian
 email: brian.winston@jhu.edu
 ---
 
-Alice Wu is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+Hello, I'm Brian. This is my website. I am a PhD student in the Center for Psychedelic and Consciousness Research and Department of Psychological and Brain Sciences. I'm trying to figure out how psychedelics change the mind and brain, so I'll let you know when I do that. In the meantime, you can check out my publications, posters, talks, sci-comm articles, blog posts, videos, and more. 
+I'm also intersted in aging research that aims to increase healthspan. Recently, I received a T32 Fellowship from the National Institutes on Aging to investigate novel forms of treating early Alzheimer's. Stay tuned!
+
 {style="text-align: justify;"}
