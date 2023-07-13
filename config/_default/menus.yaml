@@ -11,10 +11,10 @@ main:
     url: '#featured'
     weight: 20
   - name: SciComm
-    url: '#scicomm'
+    url: '#SciComm'
     weight: 30
   - name: Fun
-    url: '#fun'
+    url: '#Fun'
     weight: 40
   - name: Contact
     url: '#contact'
