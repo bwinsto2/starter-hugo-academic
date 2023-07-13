@@ -28,7 +28,7 @@ sections:
       title: Featured Posters
       subtitle: ''
       text: |-
-        {{< gallery album="demo" >}}
+        {{< gallery album="posters" >}}
   - block: collection
     id: SciComm
     content:
