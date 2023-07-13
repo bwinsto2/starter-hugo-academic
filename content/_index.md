@@ -80,6 +80,7 @@ sections:
       view: compact
       columns: '2'
   - block: markdown
+    id: Fun
     content:
       title: Fun
       subtitle: ''
