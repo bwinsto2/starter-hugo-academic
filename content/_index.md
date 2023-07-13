@@ -23,16 +23,16 @@ sections:
       columns: '2'
       view: card
    - block: collection
-    id: posters
-    content:
-      title: Featured Posters
-      filters:
-        folders:
-          - poster
-        featured_only: true
-    design:
-      columns: '2'
-      view: card
+      id: posters
+      content:
+        title: Featured Posters
+        filters:
+          folders:
+            - poster
+          featured_only: true
+      design:
+        columns: '2'
+        view: card
   - block: collection
     id: SciComm
     content:
