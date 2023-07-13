@@ -64,7 +64,7 @@ sections:
       title: Contact
       subtitle:
       text: |-
-        If you want to reach me, below are multiple options for doing that
+        If you want to reach me, check out all these options for doing that:
       # Contact (add or remove contact options as necessary)
       email: brian.winston@jhu.edu  
       phone: +1 (240) 997 5037
