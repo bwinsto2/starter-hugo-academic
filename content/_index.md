@@ -105,7 +105,7 @@ sections:
       columns: '2'
   - block: markdown
     content:
-      title: Gallery
+      title: Fun
       subtitle: ''
       text: |-
         {{< gallery album="demo" >}}
