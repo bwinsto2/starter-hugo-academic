@@ -64,7 +64,7 @@ sections:
       title: Contact
       subtitle:
       text: |-
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam mi diam, venenatis ut magna et, vehicula efficitur enim.
+        If you want to reach me, below are multiple options for doing that
       # Contact (add or remove contact options as necessary)
       email: brian.winston@jhu.edu  
       phone: +1 (240) 997 5037
