@@ -16,8 +16,7 @@ sections:
     content:
       title: Research
       subtitle: ''
-      text: |-
-        {{< gallery album="posters" >}}  
+      text: hi
   - block: collection
     id: featured
     content:
