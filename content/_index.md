@@ -16,7 +16,7 @@ sections:
     content:
       title: Research
       subtitle: ''
-      text: "Oxygen: <iframe width='560' height='315' src='https://www.youtube.com/embed/hSqfxILsKRk' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+      text: "<iframe width='560' height='315' src='https://www.youtube.com/embed/hSqfxILsKRk' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe> <iframe width='560' height='315' src='https://vimeo.com/124807425' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
   - block: collection
     id: featured
     content:
