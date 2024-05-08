@@ -76,9 +76,9 @@ sections:
       view: compact
       columns: '2'
   - block: markdown
-    id: Fun
+    id: urbex
     content:
-      title: Fun
+      title: Urban Exploration
       subtitle: ''
       text: |-
         <div data-behold-id="I0AEGufAbE4qLvH8mnzw"></div>
