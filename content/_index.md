@@ -39,7 +39,7 @@ sections:
     id: SciComm
     content:
       title: SciComm
-      subtitle: 'I can't figure out how to use this website'
+      subtitle: I cant figure out how to use this website
       text: ''
       # Choose how many pages you would like to display (0 = all pages)
       count: 5
