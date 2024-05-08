@@ -19,8 +19,8 @@ main:
   - name: SciComm
     url: '#SciComm'
     weight: 30
-  - name: Fun
-    url: '#Fun'
+  - name: UrbEx
+    url: '#urbex'
     weight: 40
   - name: Contact
     url: '#contact'
