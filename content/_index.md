@@ -29,8 +29,7 @@ sections:
           <iframe width='400' height='315' src='https://www.youtube.com/embed/VSR88ULkxIY' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
         </div>
         </div>
-          <h2> Example recall data:</h2>
-          Hello
+          <h2> [Click Here to see Example Recall Data](/recall/)</h2> 
   - block: collection
     id: featured
     content:
