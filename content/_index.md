@@ -11,6 +11,13 @@ sections:
       title: About
       # Choose a user profile to display (a folder name within `content/authors/`)
       username: admin
+  - block: markdown
+    id: Research
+    content:
+      title: Research
+      subtitle: ''
+      text: |-
+        {{< gallery album="posters" >}}  
   - block: collection
     id: featured
     content:
@@ -33,7 +40,7 @@ sections:
     id: SciComm
     content:
       title: SciComm
-      subtitle: ''
+      subtitle: 'I can't figure out how to use this website'
       text: ''
       # Choose how many pages you would like to display (0 = all pages)
       count: 5
@@ -79,17 +86,7 @@ sections:
         - icon: twitter
           icon_pack: fab
           name: DM Me
-          link: 'https://twitter.com/Twitter'
+          link: 'https://twitter.com/winstonian3'
       # Automatically link email and phone or display as text?
       autolink: true
-      # Email form provider
-      form:
-        provider: netlify
-        formspree:
-          id:
-        netlify:
-          # Enable CAPTCHA challenge to reduce spam?
-          captcha: false
-    design:
-      columns: '2'
 ---
