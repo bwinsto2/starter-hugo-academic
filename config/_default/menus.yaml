@@ -17,7 +17,7 @@ main:
     url: '#posters'
     weight: 21
   - name: SciComm
-    url: '#SciComm'
+    url: '#scicomm'
     weight: 30
   - name: UrbEx
     url: '#urbex'
