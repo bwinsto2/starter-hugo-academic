@@ -49,12 +49,12 @@ sections:
       text: |-
         {{< gallery album="posters" >}}
   - block: markdown
-      id: scicomm
-      content:
-        title: Science Communication
-        subtitle: ''
-        text: |-
-          <div class='sk-ww-medium-publication-feed' data-embed-id='25410619'></div><script src='https://widgets.sociablekit.com/medium-publication-feed/widget.js' async defer></script>
+    id: scicomm
+    content:
+      title: Science Communication
+      subtitle: ''
+      text: |-
+        <div class='sk-ww-medium-publication-feed' data-embed-id='25410619'></div><script src='https://widgets.sociablekit.com/medium-publication-feed/widget.js' async defer></script>
   - block: markdown
     id: urbex
     content:
