@@ -48,33 +48,13 @@ sections:
       subtitle: ''
       text: |-
         {{< gallery album="posters" >}}
-  - block: collection
-    id: SciComm
-    content:
-      title: SciComm
-      subtitle: I cant figure out how to use this website
-      text: ''
-      # Choose how many pages you would like to display (0 = all pages)
-      count: 1
-      # Filter on criteria
-      filters:
-        folders:
-          - post
-        author: ""
-        category: ""
-        tag: ""
-        exclude_featured: false
-        exclude_future: false
-        exclude_past: false
-        publication_type: ""
-      # Choose how many pages you would like to offset by
-      offset: 0
-      # Page order: descending (desc) or ascending (asc) date.
-      order: desc
-    design:
-      # Choose a layout view
-      view: compact
-      columns: '2'
+  - block: markdown
+      id: scicomm
+      content:
+        title: Science Communication
+        subtitle: ''
+        text: |-
+          <div class='sk-ww-medium-publication-feed' data-embed-id='25410619'></div><script src='https://widgets.sociablekit.com/medium-publication-feed/widget.js' async defer></script>
   - block: markdown
     id: urbex
     content:
