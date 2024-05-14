@@ -1,0 +1,21 @@
+.custom-summary {
+  font-size: 18px; /* Larger font size */
+  color: white; /* Text color */
+  background-color: #007BFF; /* Background color */
+  padding: 10px 15px; /* Padding around the text */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Cursor indicates clickable */
+  border: none; /* No border */
+  outline: none; /* No focus outline */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow for depth */
+  width: fit-content;
+  margin-bottom: 10px; /* Space below the button */
+}
+.custom-summary:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+.custom-details {
+  border: 1px solid #007BFF; /* Border color matches button */
+  border-radius: 5px; /* Rounded corners for the details box */
+  padding: 15px; /* Padding inside the collapsible content */
+}
