@@ -21,7 +21,7 @@ sections:
           .custom-summary {
             font-size: 24px; /* Larger font size */
             color: white; /* Text color */
-            background-color: #007BFF; /* Background color */
+            background-color: #1565c0; /* Background color */
             padding: 10px 15px; /* Padding around the text */
             border-radius: 5px; /* Rounded corners */
             cursor: pointer; /* Cursor indicates clickable */
@@ -36,9 +36,9 @@ sections:
           }
         </style>
         <details>
-          <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics:</summary>
+          <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics</summary>
           <div class="custom-details">
-            <h2 id="psilocybin-movies">Movie Stimuli:</h2>
+            <h2 id="psilocybin-movies">Movie Stimuli Used in Winston et. al, 2025 (in prep):</h2>
             <iframe width='400' height='315' src='https://www.youtube.com/embed/hSqfxILsKRk' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
           <iframe width='450' height='315' src='https://player.vimeo.com/video/124807425?h=69f52cad4d&title=0&byline=0&portrait=0' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
           <iframe width='400' height='315' src='https://www.youtube.com/embed/LIsDtHTklrE' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
