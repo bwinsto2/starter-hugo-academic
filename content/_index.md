@@ -51,7 +51,7 @@ sections:
         <p><a href="/recall/">Click Here to see Example Recall Data</a></p>
           </div>
         </details>
-        </details>
+        <details>
           <summary class="custom-summary">Reopening Critical Periods with Psychedelics</summary>
           <div class="custom-details">
             <h2 id="critical">PATCH and Psi-CLOPS studies:</h2>
