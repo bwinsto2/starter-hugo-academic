@@ -19,7 +19,7 @@ sections:
       text: |-
         <style>
           .custom-summary {
-            font-size: 18px; /* Larger font size */
+            font-size: 24px; /* Larger font size */
             color: white; /* Text color */
             background-color: #007BFF; /* Background color */
             padding: 10px 15px; /* Padding around the text */
@@ -33,11 +33,6 @@ sections:
           }
           .custom-summary:hover {
             background-color: #0056b3; /* Darker blue on hover */
-          }
-          .custom-details {
-            border: 1px solid #007BFF; /* Border color matches button */
-            border-radius: 5px; /* Rounded corners for the details box */
-            padding: 15px; /* Padding inside the collapsible content */
           }
         </style>
         <details>
