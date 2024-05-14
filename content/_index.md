@@ -41,7 +41,7 @@ sections:
           }
         </style>
         <details>
-          <summary class="custom-summary">Click here to expand the movie stimuli used in the psilocybin study:</summary>
+          <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics:</summary>
           <div class="custom-details">
             <h2 id="psilocybin-movies">Movie Stimuli:</h2>
             <iframe width='400' height='315' src='https://www.youtube.com/embed/hSqfxILsKRk' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
