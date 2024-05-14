@@ -46,14 +46,16 @@ sections:
           <iframe width='400' height='315' src='https://www.youtube.com/embed/XrqSF2OOz_M' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
           <iframe width='400' height='315' src='https://player.vimeo.com/video/270992364?h=15b4603141' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
           <iframe width='400' height='315' src='https://www.youtube.com/embed/yHXLFk8p9WU' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
-          <iframe width='400' height='315' src='https://www.youtube.com/embed/VSR88ULkxIY' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
-          </div>
+          <iframe width='400' height='315' src='https://www.youtube.com/embed/VSR88ULkxIY' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>    
         <h2>Example recall data</h2>
         <p><a href="/recall/">Click Here to see Example Recall Data</a></p>
+          </div>
         </details>
         </details>
           <summary class="custom-summary">Reopening Critical Periods with Psychedelics</summary>
+          <div class="custom-details">
             <h2 id="critical">PATCH and Psi-CLOPS studies:</h2>
+          </div>
         </details>
   - block: collection
     id: featured
