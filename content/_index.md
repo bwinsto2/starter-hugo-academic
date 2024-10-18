@@ -31,6 +31,9 @@ sections:
             width: fit-content;
             margin-bottom: 10px; /* Space below the button */
           }
+          summary {
+            list-style: none;
+          }
           .custom-summary:hover {
             background-color: #0056b3; /* Darker blue on hover */
           }
@@ -38,8 +41,8 @@ sections:
         <details>
           <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics</summary>
           <div class="custom-details">
-            <h2 id="naturalistic-text">How do psychedelics affect the mind and brain in real-world scenarios?:</h2>
-            <p>This is some placeholder text that appears before the section about psilocybin movies.</p>
+            <h2 id="naturalistic-text">How do psychedelics affect the mind and brain in real-world scenarios?</h2>
+            <p> To date, most psychedelic neuroimaging studies have administered drugs to people lying down with their eyes closed. Using these data, the field has built theories and models for how psychedelics alter thoughts, behavior, and brain activity with the assumption that these models will generalize across contexts. During most of waking life, however, people have their eyes open, they process information, interact with other people, and solve problems. Anecdotally, psychedelic effects are different in these states, but the field has not yet characterized how. I record people’s brain activity while they watch movies. Movies simulate many features of real life such as movement through space, social interaction, emotional changes, and narrative structure. These data allow us to probe how psychedelics modulate perception, emotional responses, memory, causal judgment, and much more. </p>
             <h2 id="psilocybin-movies">Movie Stimuli Used in Winston et. al, 2025 (in prep):</h2>
             <iframe width='400' height='315' src='https://www.youtube.com/embed/hSqfxILsKRk' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
           <iframe width='450' height='315' src='https://player.vimeo.com/video/124807425?h=69f52cad4d&title=0&byline=0&portrait=0' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
