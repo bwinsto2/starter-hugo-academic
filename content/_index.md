@@ -38,6 +38,8 @@ sections:
         <details>
           <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics</summary>
           <div class="custom-details">
+            <h2 id="naturalistic-text">How do psychedelics affect the mind and brain in real-world scenarios?:</h2>
+            <p>This is some placeholder text that appears before the section about psilocybin movies.</p>
             <h2 id="psilocybin-movies">Movie Stimuli Used in Winston et. al, 2025 (in prep):</h2>
             <iframe width='400' height='315' src='https://www.youtube.com/embed/hSqfxILsKRk' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
           <iframe width='450' height='315' src='https://player.vimeo.com/video/124807425?h=69f52cad4d&title=0&byline=0&portrait=0' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
