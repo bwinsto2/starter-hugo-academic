@@ -31,9 +31,7 @@ sections:
             width: fit-content;
             margin-bottom: 10px; /* Space below the button */
           }
-          summary {
-            list-style: none;
-          }
+
           .custom-summary:hover {
             background-color: #0056b3; /* Darker blue on hover */
           }
