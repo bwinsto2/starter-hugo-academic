@@ -36,6 +36,11 @@ sections:
             background-color: #0056b3; /* Darker blue on hover */
           }
         </style>
+    text: |-
+      [Jump to Naturalistic Stimuli section](#naturalistic-text)
+
+  <details>
+    <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics</summary>
         <details>
           <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics</summary>
           <div class="custom-details">
