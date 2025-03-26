@@ -36,7 +36,7 @@ sections:
             background-color: #0056b3; /* Darker blue on hover */
           }
         </style>
-    text: |-
+   
       [Jump to Naturalistic Stimuli section](#naturalistic-text)
 
   <details>
