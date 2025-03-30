@@ -36,7 +36,7 @@ sections:
             background-color: #0056b3; /* Darker blue on hover */
           }
         </style>
-        <details>
+        <details id="naturalistic-section">
           <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics</summary>
           <div class="custom-details">
             <h2 id="naturalistic-text">How do psychedelics affect the mind and brain in real-world scenarios?</h2>
