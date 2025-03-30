@@ -38,7 +38,7 @@ sections:
           }
         </style>
 
-        [Jump to Naturalistic Stimuli section](#movie-stimuli)
+        [Jump to Naturalistic Stimuli section](#naturalistic-text)
 
         <details>
           <summary class="custom-summary">Using Naturalistic Stimuli to Probe the Cognitive and Neural Effects of Psychedelics</summary>
