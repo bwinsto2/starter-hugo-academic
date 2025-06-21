@@ -50,4 +50,3 @@ email: brian.winston@jhu.edu
 Hey. I'm Brian. Welcome to my half-finished website. I am a PhD student in the [Center for Psychedelic and Consciousness Research](https://hopkinspsychedelic.org/) and [Department of Psychological and Brain Sciences](https://pbs.jhu.edu/) trying to figure out how psychedelics change the mind and brain. I'll let you know when I do that. In the meantime, you can check out my publications, posters, talks, sci-comm articles, blog posts, videos, and more. 
 I'm also intersted in aging research that aims to increase healthspan. Recently, I received a T32 Fellowship from the National Institutes on Aging to investigate novel forms of treating early Alzheimer's. Stay tuned!
 
-{style="text-align: justify;"}
