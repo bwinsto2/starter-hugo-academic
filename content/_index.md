@@ -58,7 +58,7 @@ sections:
           <summary class="custom-summary">Reopening Critical Periods with Psychedelics</summary>
           <div class="custom-details">
             <h2 id="critical">PATCH and Psi-CLOPS studies:</h2>
-            <p> An intriguing hypothesis is that psychedelics enable flexible and durable behavioral changes by transiently increasing the malleability of neural circuits. We are testing this hypothesis in rodent and human models. </p>
+            <p> An intriguing hypothesis is that psychedelics enable flexible and durable behavioral changes by transiently increasing the malleability of neural circuits. I received a 2025 Discovery Award to conduct the first human study directly focused on the effects of psychedelics on neuroplasticity. Stay tuned for more! </p>
           </div>
         </details>
   - block: collection
