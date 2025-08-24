@@ -62,17 +62,6 @@ sections:
             <p> An intriguing hypothesis is that psychedelics enable flexible and durable behavioral changes by transiently increasing the malleability of neural circuits. I received a 2025 Discovery Award to conduct the first-ever human study that will measure the effects of psychedelics on neuroplasticity: PATCH - Psilocybin for Amblyopia, Targeting Critical periods in Humans. Stay tuned for more! </p>
           </div>
         </details>
-  - block: collection
-    id: featured
-    content:
-      title: Featured Publications
-      filters:
-        folders:
-          - publication
-        featured_only: true
-    design:
-      columns: '2'
-      view: card
   - block: markdown
     id: posters
     content:
