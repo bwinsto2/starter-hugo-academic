@@ -1,12 +1,9 @@
 ---
-title: "SFN 2025 — References"
+title: "References for poster: Context-Dependent Effects of Psilocybin on Temporal Brain Dynamics in Humans"
 date: 2025-11-07
 draft: false
 slug: "references"
 ---
-
-# References for poster: Context-Dependent Effects of Psilocybin on Temporal Brain Dynamics in Humans
-
 1.	Preller, K. H. et al. Psilocybin Induces Time-Dependent Changes in Global Functional Connectivity. Biological Psychiatry 88, 197–207 (2020).
 2.	Shinn, M. et al. Functional brain networks reflect spatial and temporal autocorrelation. Nat Neurosci 26, 867–878 (2023).
 3.	Johnson, M. W., Richards, W. A. & Griffiths, R. R. Human Hallucinogen Research: Guidelines for Safety. J Psychopharmacol 22, 603–620 (2008).
