@@ -2,8 +2,7 @@
 title: Brian Winston
 role: PhD Student in Psychological and Brain Sciences
 avatar_filename: avatar.jpg
-bio: My research interests include distributed robotics, mobile computing and
-  programmable matter.
+bio: Psychedelic researcher, compassionate human, and aspiring futurist.
 interests:
   - Psychedelics
   - Cognitive Neuroscience
