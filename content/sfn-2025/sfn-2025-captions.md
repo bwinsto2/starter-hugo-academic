@@ -2,7 +2,7 @@
 title: "Figure captions for poster: Context-Dependent Effects of Psilocybin on Temporal Brain Dynamics in Humans"
 date: 2025-11-08
 draft: false
-slug: "references"
+slug: "captions"
 ---
 
 # Figure 1 — Psilocybin reduces TA across the brain during rest but not music listening 
@@ -21,5 +21,6 @@ We hypothesized that the TA change between Other parcels and Music parcels would
 
 
 # Figure 3 – Psilocybin disproportionately disrupts slow dynamics during rest but not music
+Parcel scatterplot (Placebo vs Psilocybin TA): For rest (blue) and music listening scans (orange) each point is plotted such that x = Placebo TA and y = Psilocybin TA. Not only is TA overall lower in the psilocybin condition, but this effect is strongest in parcels with high TA in the placebo condition. 
 
-
+Blomqvist sensitivity sweep: To test association between ΔTA (Psilocybin − Placebo) and Placebo (baseline) TA, we first fit an OLS slope β_crude from the regression ΔTA ~ BaselineTA across parcels. Such regressions are biased in the negative direction (see Chiolero 2013), so we applied the Blomqvist adjustment to correct the slope and its SE under different assumed baseline intraclass correlations (ICC). Specifically, for each ICC in a prespecified sweep (0.95, 0.90, …, 0.50) we computed the adjusted slope β_adj. During rest, for every ICC tested, β_adj was <-0.3, which suggests that ΔTA was greater in high TA regions at baseline. In contrast, during music listening, β_adj could be positive or negative depending on ICC, which suggests there is no association between ΔTA and baseline TA during music listening. 
