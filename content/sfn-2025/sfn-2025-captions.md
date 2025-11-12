@@ -9,7 +9,7 @@ slug: "captions"
 
 Lag-1 temporal autocorrelation (TA) was measured over the entire resting state and music listening scans at each voxel of the brain. Voxelwise TA was averaged within each of 400 parcels in the Schaefer parcellation and projected to the cortical surface. 
 
-TA change was calculated at each parcel (Psilocyin - Placebo). more details
+ΔTA: for each parcel we generated 10,000 null samples by randomly flipping the sign of each subject’s ΔTA, recomputed the group mean ΔTA for the parcel, and used the empirical null to obtain a two‑sided p‑value. P-values were then FDR corrected (a = 0.05). q < 0.05 in 361/400 parcels for the resting state scan, and q < 0.05 in 0 parcels for the musc listening scan. 
 
 # Figure 2 – Psilocybin effects on TA are blocked when brain regions entrain to music 
 
