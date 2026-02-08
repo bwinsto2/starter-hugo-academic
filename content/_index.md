@@ -78,7 +78,7 @@ sections:
           .talk-item {
             text-align: center;
             width: 100%;
-            max-width: 560px;
+            max-width: 1000px;
           }
           .talk-item h3 {
             margin-bottom: 15px;
