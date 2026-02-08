@@ -89,6 +89,14 @@ sections:
             s.src="https://w.behold.so/widget.js";d.head.append(s);
           })();
         </script>
+  - block: markdown
+    id: talks
+    content:
+      title: Talks
+      subtitle: ''
+      text: |-
+        <h3>Similarity of the Psychedelic Experience Across People</h3>
+        <iframe width='560' height='315' src='https://www.youtube.com/embed/7NOBjI0P30A' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
   - block: contact
     id: contact
     content:
