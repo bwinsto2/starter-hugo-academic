@@ -68,10 +68,37 @@ sections:
       title: Talks
       subtitle: ''
       text: |-
-        <h3>PATCH: Psychedelics for Amblyopia -- Targeting Critical periods in Humans</h3>
-        <iframe width='560' height='315' src='https://www.youtube.com/embed/L-LDUzu8wvc' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
-        <h3>Similarity of the Psychedelic Experience Across People</h3>
-        <iframe width='560' height='315' src='https://www.youtube.com/embed/7NOBjI0P30A' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+        <style>
+          .talks-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+          }
+          .talk-item {
+            text-align: center;
+            width: 100%;
+            max-width: 560px;
+          }
+          .talk-item h3 {
+            margin-bottom: 15px;
+          }
+          .talk-item iframe {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 560 / 315;
+          }
+        </style>
+        <div class="talks-container">
+          <div class="talk-item">
+            <h3>PATCH: Psychedelics for Amblyopia -- Targeting Critical periods in Humans</h3>
+            <iframe src='https://www.youtube.com/embed/L-LDUzu8wvc' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+          </div>
+          <div class="talk-item">
+            <h3>Similarity of the Psychedelic Experience Across People</h3>
+            <iframe src='https://www.youtube.com/embed/7NOBjI0P30A' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+          </div>
+        </div>
   - block: markdown
     id: posters
     content:
