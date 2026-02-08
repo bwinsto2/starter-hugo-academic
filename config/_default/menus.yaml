@@ -10,6 +10,9 @@ main:
   - name: Research
     url: '#research'
     weight: 10
+  - name: Talks
+    url: '#talks'
+    weight: 15
   - name: Posters
     url: '#posters'
     weight: 21
