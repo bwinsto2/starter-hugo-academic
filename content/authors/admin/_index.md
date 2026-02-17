@@ -46,5 +46,5 @@ first_name: Brian
 email: brian.winston@jhu.edu
 ---
 
-Hey. I'm Brian. Welcome to my website. I am a PhD student in the [Center for Psychedelic and Consciousness Research](https://hopkinspsychedelic.org/) and [Department of Psychological and Brain Sciences](https://pbs.jhu.edu/) trying to figure out how psychedelics change the mind and brain. I'll let you know when I do that. In the meantime, you can check out my publications, posters, talks, sci-comm articles, and more. Don't hesitate to get in touch!
+Hey. I'm Brian. Welcome to my website. I am a PhD student in the Johns Hopkins [Center for Psychedelic and Consciousness Research](https://hopkinspsychedelic.org/) and [Department of Psychological and Brain Sciences](https://pbs.jhu.edu/) trying to figure out how psychedelics change the mind and brain. I'll let you know when I do that. In the meantime, you can check out my publications, posters, talks, sci-comm articles, and more. Don't hesitate to get in touch!
 
