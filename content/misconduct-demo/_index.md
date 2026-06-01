@@ -18,6 +18,10 @@ type: docs
             box-sizing: border-box;
         }
 
+        html {
+            font-size: clamp(14px, 2vw, 18px);
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -25,45 +29,53 @@ type: docs
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: clamp(10px, 4vw, 20px);
         }
 
         .container {
             background: white;
-            border-radius: 12px;
+            border-radius: clamp(8px, 2vw, 12px);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 900px;
             width: 100%;
             overflow: hidden;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: clamp(15px, 5vw, 30px);
             text-align: center;
+            flex-shrink: 0;
         }
 
         .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
+            font-size: clamp(20px, 6vw, 28px);
+            margin-bottom: clamp(4px, 1vw, 8px);
         }
 
         .header p {
-            font-size: 14px;
+            font-size: clamp(12px, 2.5vw, 14px);
             opacity: 0.9;
         }
 
         .content {
-            padding: 40px;
+            padding: clamp(15px, 4vw, 40px);
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .progress-bar {
             width: 100%;
-            height: 4px;
+            height: clamp(2px, 1vw, 4px);
             background: #e0e0e0;
             border-radius: 2px;
-            margin-bottom: 30px;
+            margin-bottom: clamp(15px, 3vw, 30px);
             overflow: hidden;
         }
 
@@ -76,13 +88,15 @@ type: docs
 
         .video-container {
             background: #000;
-            border-radius: 8px;
+            border-radius: clamp(6px, 1.5vw, 8px);
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: clamp(15px, 3vw, 30px);
             aspect-ratio: 16/9;
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 200px;
+            width: 100%;
         }
 
         .video-container video {
@@ -93,27 +107,38 @@ type: docs
 
         .no-video {
             color: #999;
-            font-size: 16px;
+            font-size: clamp(13px, 2.5vw, 16px);
             text-align: center;
+            padding: clamp(10px, 3vw, 20px);
         }
 
         .file-input-section {
-            margin-bottom: 30px;
-            padding: 20px;
+            margin-bottom: clamp(15px, 3vw, 30px);
+            padding: clamp(12px, 2.5vw, 20px);
             background: #f5f5f5;
-            border-radius: 8px;
+            border-radius: clamp(6px, 1.5vw, 8px);
             text-align: center;
+            display: none;
+        }
+
+        .file-input-section.show {
+            display: block;
         }
 
         .file-input-section label {
             display: inline-block;
-            padding: 10px 20px;
+            padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px);
             background: #667eea;
             color: white;
-            border-radius: 6px;
+            border-radius: clamp(4px, 1vw, 6px);
             cursor: pointer;
-            font-size: 14px;
+            font-size: clamp(12px, 2.5vw, 14px);
             transition: background 0.3s ease;
+            user-select: none;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .file-input-section label:hover {
@@ -125,21 +150,22 @@ type: docs
         }
 
         .files-list {
-            margin-top: 15px;
+            margin-top: clamp(10px, 2vw, 15px);
             max-height: 200px;
             overflow-y: auto;
         }
 
         .file-item {
-            padding: 8px 12px;
+            padding: clamp(6px, 1.5vw, 8px) clamp(8px, 2vw, 12px);
             background: white;
             border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            margin-bottom: 8px;
+            border-radius: clamp(3px, 1vw, 4px);
+            margin-bottom: clamp(6px, 1vw, 8px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: clamp(11px, 2vw, 13px);
+            word-break: break-word;
         }
 
         .file-item.current {
@@ -151,36 +177,54 @@ type: docs
             cursor: pointer;
             color: #f44336;
             font-weight: bold;
-            padding: 0 6px;
+            padding: clamp(4px, 1vw, 6px);
+            flex-shrink: 0;
+            margin-left: clamp(8px, 2vw, 12px);
+            min-width: 20px;
+            text-align: center;
         }
 
         .button-group {
             display: flex;
-            gap: 15px;
+            gap: clamp(10px, 2vw, 15px);
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: clamp(15px, 3vw, 30px);
+            flex-wrap: wrap;
+            width: 100%;
         }
 
         .review-button {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 16px 24px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            gap: clamp(4px, 1vw, 8px);
+            padding: clamp(12px, 2vw, 16px) clamp(14px, 2.5vw, 24px);
+            border: clamp(1px, 0.5vw, 2px) solid #e0e0e0;
+            border-radius: clamp(6px, 1.5vw, 8px);
             background: white;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 13px;
+            font-size: clamp(10px, 2vw, 13px);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            flex: 1;
+            min-width: clamp(70px, 25vw, 120px);
+            min-height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .review-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        .review-button:active {
+            transform: scale(0.95);
+        }
+
+        @media (hover: hover) {
+            .review-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
         }
 
         .review-button.approve {
@@ -211,7 +255,7 @@ type: docs
         }
 
         .icon {
-            font-size: 32px;
+            font-size: clamp(24px, 5vw, 32px);
         }
 
         .modal-overlay {
@@ -233,26 +277,26 @@ type: docs
 
         .modal {
             background: white;
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: clamp(8px, 2vw, 12px);
+            padding: clamp(15px, 4vw, 30px);
             max-width: 500px;
-            width: 90%;
+            width: 90vw;
             max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .modal h2 {
-            font-size: 20px;
-            margin-bottom: 20px;
+            font-size: clamp(16px, 4vw, 20px);
+            margin-bottom: clamp(12px, 2.5vw, 20px);
             color: #333;
         }
 
         .modal h3 {
-            font-size: 14px;
+            font-size: clamp(11px, 2.5vw, 14px);
             font-weight: 600;
-            margin-top: 20px;
-            margin-bottom: 12px;
+            margin-top: clamp(12px, 2.5vw, 20px);
+            margin-bottom: clamp(8px, 2vw, 12px);
             color: #555;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -261,40 +305,42 @@ type: docs
         .checkbox-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: clamp(8px, 1.5vw, 12px);
+            margin-bottom: clamp(12px, 2vw, 20px);
         }
 
         .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: clamp(6px, 1.5vw, 10px);
         }
 
         .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: clamp(16px, 4vw, 18px);
+            height: clamp(16px, 4vw, 18px);
             cursor: pointer;
             accent-color: #667eea;
+            flex-shrink: 0;
+            min-width: 18px;
         }
 
         .checkbox-item label {
             cursor: pointer;
-            font-size: 14px;
+            font-size: clamp(12px, 2.5vw, 14px);
             color: #333;
             flex: 1;
         }
 
         textarea {
             width: 100%;
-            padding: 12px;
+            padding: clamp(8px, 2vw, 12px);
             border: 1px solid #e0e0e0;
-            border-radius: 6px;
+            border-radius: clamp(4px, 1vw, 6px);
             font-family: inherit;
-            font-size: 13px;
+            font-size: clamp(12px, 2.5vw, 13px);
             resize: vertical;
-            min-height: 100px;
-            margin-bottom: 20px;
+            min-height: clamp(80px, 20vw, 100px);
+            margin-bottom: clamp(12px, 2vw, 20px);
         }
 
         textarea:focus {
@@ -305,18 +351,23 @@ type: docs
 
         .modal-buttons {
             display: flex;
-            gap: 10px;
+            gap: clamp(6px, 2vw, 10px);
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px);
             border: none;
-            border-radius: 6px;
+            border-radius: clamp(4px, 1vw, 6px);
             cursor: pointer;
-            font-size: 14px;
+            font-size: clamp(12px, 2.5vw, 14px);
             font-weight: 600;
             transition: all 0.3s ease;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-cancel {
@@ -324,8 +375,14 @@ type: docs
             color: #333;
         }
 
-        .btn-cancel:hover {
+        .btn-cancel:active {
             background: #d0d0d0;
+        }
+
+        @media (hover: hover) {
+            .btn-cancel:hover {
+                background: #d0d0d0;
+            }
         }
 
         .btn-submit {
@@ -333,17 +390,24 @@ type: docs
             color: white;
         }
 
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        .btn-submit:active {
+            transform: scale(0.95);
+        }
+
+        @media (hover: hover) {
+            .btn-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
         }
 
         .status-message {
             text-align: center;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: clamp(12px, 2.5vw, 20px);
+            border-radius: clamp(6px, 1.5vw, 8px);
+            margin-bottom: clamp(12px, 2vw, 20px);
             display: none;
+            font-size: clamp(12px, 2.5vw, 14px);
         }
 
         .status-message.show {
@@ -363,26 +427,17 @@ type: docs
         .clip-counter {
             text-align: center;
             color: #666;
-            font-size: 14px;
-            margin-top: 10px;
+            font-size: clamp(12px, 2.5vw, 14px);
+            margin-top: clamp(8px, 1.5vw, 10px);
         }
 
         @media (max-width: 600px) {
             .content {
-                padding: 20px;
+                padding: clamp(12px, 3vw, 20px);
             }
 
-            .button-group {
-                flex-wrap: wrap;
-            }
-
-            .review-button {
-                flex: 1;
-                min-width: 100px;
-            }
-
-            .modal {
-                padding: 20px;
+            .header h1 {
+                font-size: clamp(18px, 5vw, 24px);
             }
         }
     </style>
@@ -399,16 +454,17 @@ type: docs
                 <div class="progress-fill" id="progressBar"></div>
             </div>
 
-            <div class="file-input-section">
+            <div class="file-input-section" id="fileInputSection">
                 <label for="videoUpload">📁 Select Video Clips (Multiple)</label>
                 <input type="file" id="videoUpload" multiple accept="video/*">
                 <div class="files-list" id="filesList"></div>
             </div>
 
+            <div class="status-message show" id="loadingMessage">Loading therapy clips...</div>
             <div class="status-message" id="statusMessage"></div>
 
             <div class="video-container" id="videoContainer">
-                <div class="no-video">Select video files to begin review</div>
+                <div class="no-video">Loading...</div>
             </div>
 
             <div class="button-group">
@@ -484,25 +540,146 @@ type: docs
         const filesList = document.getElementById('filesList');
         const progressBar = document.getElementById('progressBar');
         const statusMessage = document.getElementById('statusMessage');
+        const loadingMessage = document.getElementById('loadingMessage');
         const clipCounter = document.getElementById('clipCounter');
         const videoUpload = document.getElementById('videoUpload');
         const modalOverlay = document.getElementById('modalOverlay');
+        const fileInputSection = document.getElementById('fileInputSection');
 
-        // Handle file selection
+        // Auto-load clips on page load
+        window.addEventListener('load', () => {
+            autoLoadClips();
+        });
+
+        // Handle file selection fallback
         videoUpload.addEventListener('change', (e) => {
             videoFiles = Array.from(e.target.files);
             currentClipIndex = 0;
+            loadingMessage.classList.remove('show');
             updateFilesList();
             loadClip();
         });
+
+        async function autoLoadClips() {
+            loadingMessage.classList.add('show');
+            
+            // For local file:// access, directly reference the video files
+            const videoExts = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.m4v'];
+            const baseDir = '/Users/bwinsto2/Documents/Documents - BV-PCR-VPJVMF3/starter-hugo-academic/static/uploads/therapy_clips/';
+            
+            // Known video files
+            const knownFiles = [
+                '7200768-uhd_3840_2160_25fps.mp4',
+                '7423853-uhd_3840_2160_30fps.mp4',
+                '8428655-uhd_3840_2160_25fps.mp4'
+            ];
+            
+            // Try direct file:// URLs first (for local testing)
+            try {
+                const videoUrls = knownFiles.map(filename => 'file://' + baseDir + filename);
+                console.log('Attempting direct file:// URLs:', videoUrls);
+                await loadVideosFromUrls(videoUrls);
+                loadingMessage.classList.remove('show');
+                return;
+            } catch (e) {
+                console.log('Direct file URLs failed:', e.message);
+            }
+            
+            // Try relative paths (for web server)
+            const pathVariations = [
+                './uploads/therapy_clips/',
+                '/uploads/therapy_clips/',
+                './static/uploads/therapy_clips/',
+            ];
+            
+            for (const basePath of pathVariations) {
+                try {
+                    console.log('Trying path:', basePath);
+                    const response = await fetch(basePath);
+                    
+                    if (!response.ok) continue;
+                    
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const links = Array.from(doc.querySelectorAll('a'));
+                    
+                    const videoUrls = links
+                        .map(a => {
+                            const href = a.href;
+                            if (href.startsWith('http')) return href;
+                            return basePath + a.textContent.trim();
+                        })
+                        .filter(href => videoExts.some(ext => href.toLowerCase().endsWith(ext)))
+                        .filter(href => !href.includes('..'));
+                    
+                    if (videoUrls.length > 0) {
+                        console.log('Found videos:', videoUrls);
+                        await loadVideosFromUrls(videoUrls);
+                        loadingMessage.classList.remove('show');
+                        return;
+                    }
+                } catch (e) {
+                    console.log('Path failed:', basePath, e.message);
+                }
+            }
+
+            // Fallback: show file picker
+            loadingMessage.textContent = 'Auto-load unavailable. Please select video files:';
+            loadingMessage.classList.add('show');
+            fileInputSection.classList.add('show');
+        }
+
+        async function loadVideosFromUrls(urls) {
+            videoFiles = [];
+            for (const url of urls) {
+                try {
+                    const filename = url.split('/').pop() || 'clip.mp4';
+                    
+                    // Handle file:// URLs directly (for local testing)
+                    if (url.startsWith('file://')) {
+                        const fileObj = {
+                            name: filename,
+                            url: url,
+                            type: 'video/mp4',
+                            isFileUrl: true
+                        };
+                        videoFiles.push(fileObj);
+                        console.log('Added file:// URL:', filename);
+                    } else {
+                        // Handle http/https URLs with fetch
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            const blob = await response.blob();
+                            const file = new File([blob], filename, { type: blob.type });
+                            videoFiles.push(file);
+                            console.log('Added blob URL:', filename);
+                        }
+                    }
+                } catch (e) {
+                    console.error('Failed to load:', url, e);
+                }
+            }
+
+            if (videoFiles.length > 0) {
+                currentClipIndex = 0;
+                updateFilesList();
+                loadClip();
+            } else {
+                loadingMessage.textContent = 'No video files found. Please select files:';
+                loadingMessage.classList.add('show');
+                fileInputSection.classList.add('show');
+            }
+        }
 
         function updateFilesList() {
             filesList.innerHTML = '';
             videoFiles.forEach((file, index) => {
                 const fileItem = document.createElement('div');
                 fileItem.className = `file-item ${index === currentClipIndex ? 'current' : ''}`;
+                const filename = file.name || file.filename || 'video.mp4';
                 fileItem.innerHTML = `
-                    <span>${index + 1}. ${file.name}</span>
+                    <span>${index + 1}. ${filename}</span>
                     <span class="file-remove" onclick="removeFile(${index})">✕</span>
                 `;
                 filesList.appendChild(fileItem);
@@ -527,8 +704,16 @@ type: docs
             }
 
             const file = videoFiles[currentClipIndex];
-            const url = URL.createObjectURL(file);
-            videoContainer.innerHTML = `<video controls><source src="${url}" type="${file.type}"></video>`;
+            let videoSrc;
+            
+            // Handle file:// URLs directly, or create blob URL for File objects
+            if (file.isFileUrl) {
+                videoSrc = file.url;
+            } else {
+                videoSrc = URL.createObjectURL(file);
+            }
+            
+            videoContainer.innerHTML = `<video controls><source src="${videoSrc}" type="${file.type}"></video>`;
             
             updateProgress();
             updateFilesList();
@@ -595,7 +780,7 @@ type: docs
 
             // Log the report (in a real app, this would send to a backend)
             console.log({
-                clip: videoFiles[currentClipIndex].name,
+                clip: videoFiles[currentClipIndex].name || videoFiles[currentClipIndex].filename,
                 reviewType: pendingReviewType,
                 concerns: selectedTypes,
                 notes: notes,
@@ -642,3 +827,4 @@ type: docs
 </body>
 </html>
 {{< /rawhtml >}}
+
