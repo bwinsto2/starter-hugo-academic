@@ -22,9 +22,6 @@ main:
   - name: UrbEx
     url: '#urbex'
     weight: 40
-  - name: Misconduct Demo
-    url: '/misconduct-demo/'
-    weight: 45
   - name: Contact
     url: '#contact'
     weight: 50

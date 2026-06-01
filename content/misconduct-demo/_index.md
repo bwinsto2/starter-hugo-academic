@@ -563,69 +563,40 @@ type: docs
         async function autoLoadClips() {
             loadingMessage.classList.add('show');
             
-            // For local file:// access, directly reference the video files
-            const videoExts = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.m4v'];
-            const baseDir = '/Users/bwinsto2/Documents/Documents - BV-PCR-VPJVMF3/starter-hugo-academic/static/uploads/therapy_clips/';
-            
-            // Known video files
+            // For web-served version, use relative paths that work on brianwinston.com
             const knownFiles = [
                 '7200768-uhd_3840_2160_25fps.mp4',
                 '7423853-uhd_3840_2160_30fps.mp4',
                 '8428655-uhd_3840_2160_25fps.mp4'
             ];
             
-            // Try direct file:// URLs first (for local testing)
-            try {
-                const videoUrls = knownFiles.map(filename => 'file://' + baseDir + filename);
-                console.log('Attempting direct file:// URLs:', videoUrls);
-                await loadVideosFromUrls(videoUrls);
-                loadingMessage.classList.remove('show');
-                return;
-            } catch (e) {
-                console.log('Direct file URLs failed:', e.message);
-            }
-            
-            // Try relative paths (for web server)
+            // Try relative paths (works when deployed on web server or with hugo server)
             const pathVariations = [
-                './uploads/therapy_clips/',
                 '/uploads/therapy_clips/',
-                './static/uploads/therapy_clips/',
+                './uploads/therapy_clips/',
+                '../static/uploads/therapy_clips/',
             ];
             
             for (const basePath of pathVariations) {
                 try {
                     console.log('Trying path:', basePath);
-                    const response = await fetch(basePath);
+                    const videoUrls = knownFiles.map(filename => basePath + filename);
                     
-                    if (!response.ok) continue;
+                    // Test if first file is accessible
+                    const testResponse = await fetch(videoUrls[0]);
+                    if (!testResponse.ok) continue;
                     
-                    const html = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const links = Array.from(doc.querySelectorAll('a'));
-                    
-                    const videoUrls = links
-                        .map(a => {
-                            const href = a.href;
-                            if (href.startsWith('http')) return href;
-                            return basePath + a.textContent.trim();
-                        })
-                        .filter(href => videoExts.some(ext => href.toLowerCase().endsWith(ext)))
-                        .filter(href => !href.includes('..'));
-                    
-                    if (videoUrls.length > 0) {
-                        console.log('Found videos:', videoUrls);
-                        await loadVideosFromUrls(videoUrls);
-                        loadingMessage.classList.remove('show');
-                        return;
-                    }
+                    console.log('Found videos:', videoUrls);
+                    await loadVideosFromUrls(videoUrls);
+                    loadingMessage.classList.remove('show');
+                    return;
                 } catch (e) {
                     console.log('Path failed:', basePath, e.message);
                 }
             }
 
             // Fallback: show file picker
-            loadingMessage.textContent = 'Auto-load unavailable. Please select video files:';
+            loadingMessage.textContent = 'For local testing: drag & drop video files, or use "hugo server" to preview with auto-loaded videos.';
             loadingMessage.classList.add('show');
             fileInputSection.classList.add('show');
         }
@@ -634,27 +605,13 @@ type: docs
             videoFiles = [];
             for (const url of urls) {
                 try {
-                    const filename = url.split('/').pop() || 'clip.mp4';
-                    
-                    // Handle file:// URLs directly (for local testing)
-                    if (url.startsWith('file://')) {
-                        const fileObj = {
-                            name: filename,
-                            url: url,
-                            type: 'video/mp4',
-                            isFileUrl: true
-                        };
-                        videoFiles.push(fileObj);
-                        console.log('Added file:// URL:', filename);
-                    } else {
-                        // Handle http/https URLs with fetch
-                        const response = await fetch(url);
-                        if (response.ok) {
-                            const blob = await response.blob();
-                            const file = new File([blob], filename, { type: blob.type });
-                            videoFiles.push(file);
-                            console.log('Added blob URL:', filename);
-                        }
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const filename = url.split('/').pop() || 'clip.mp4';
+                        const file = new File([blob], filename, { type: blob.type });
+                        videoFiles.push(file);
+                        console.log('Loaded:', filename);
                     }
                 } catch (e) {
                     console.error('Failed to load:', url, e);
@@ -666,7 +623,7 @@ type: docs
                 updateFilesList();
                 loadClip();
             } else {
-                loadingMessage.textContent = 'No video files found. Please select files:';
+                loadingMessage.textContent = 'No video files found. Please select files manually.';
                 loadingMessage.classList.add('show');
                 fileInputSection.classList.add('show');
             }
@@ -704,16 +661,8 @@ type: docs
             }
 
             const file = videoFiles[currentClipIndex];
-            let videoSrc;
-            
-            // Handle file:// URLs directly, or create blob URL for File objects
-            if (file.isFileUrl) {
-                videoSrc = file.url;
-            } else {
-                videoSrc = URL.createObjectURL(file);
-            }
-            
-            videoContainer.innerHTML = `<video controls><source src="${videoSrc}" type="${file.type}"></video>`;
+            const url = URL.createObjectURL(file);
+            videoContainer.innerHTML = `<video controls><source src="${url}" type="${file.type}"></video>`;
             
             updateProgress();
             updateFilesList();
