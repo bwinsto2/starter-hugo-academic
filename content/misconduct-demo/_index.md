@@ -259,31 +259,35 @@ type: docs
         }
 
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            display: none !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 99999 !important;
         }
 
         .modal-overlay.active {
-            display: flex;
+            display: flex !important;
         }
 
         .modal {
-            background: white;
-            border-radius: clamp(8px, 2vw, 12px);
-            padding: clamp(15px, 4vw, 30px);
-            max-width: 500px;
-            width: 90vw;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: white !important;
+            border-radius: clamp(8px, 2vw, 12px) !important;
+            padding: clamp(15px, 4vw, 30px) !important;
+            max-width: 500px !important;
+            width: 90vw !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+            position: relative !important;
+            z-index: 100000 !important;
         }
 
         .modal h2 {
