@@ -5,38 +5,39 @@ type: docs
 ---
 
 {{< rawhtml >}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Therapist Misconduct Review Interface</title>
-    <style>
-        * {
+<style>
+        .tm-demo-shell,
+        .tm-demo-shell * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html {
+        .tm-demo-shell {
             font-size: clamp(14px, 2vw, 18px);
-        }
-
-        body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: clamp(10px, 4vw, 20px);
+            color: #1f2933;
+            background: linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+            border: 1px solid rgba(21, 101, 192, 0.12);
+            border-radius: 20px;
+            padding: clamp(16px, 3vw, 28px);
+            margin: clamp(8px, 2vw, 20px) auto;
+            width: 100%;
+            max-width: 980px;
+            box-shadow: 0 18px 40px rgba(16, 24, 40, 0.08);
         }
 
-        .container {
+        .tm-demo-shell .tm-page {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(18px, 3vw, 28px);
+        }
+
+        .tm-demo-shell .tm-container {
             background: white;
-            border-radius: clamp(8px, 2vw, 12px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
+            border-radius: clamp(12px, 2vw, 18px);
+            border: 1px solid rgba(21, 101, 192, 0.1);
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
             width: 100%;
             overflow: visible;
             max-height: 95vh;
@@ -44,25 +45,21 @@ type: docs
             flex-direction: column;
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .tm-demo-shell .tm-header {
+            background: linear-gradient(135deg, #1565c0 0%, #1e88e5 100%);
             color: white;
             padding: clamp(15px, 5vw, 30px);
-            text-align: center;
             flex-shrink: 0;
+            border-radius: clamp(12px, 2vw, 18px) clamp(12px, 2vw, 18px) 0 0;
         }
 
-        .header h1 {
-            font-size: clamp(20px, 6vw, 28px);
-            margin-bottom: clamp(4px, 1vw, 8px);
+        .tm-demo-shell .tm-header p {
+            font-size: clamp(14px, 2.8vw, 18px);
+            line-height: 1.5;
+            opacity: 0.96;
         }
 
-        .header p {
-            font-size: clamp(12px, 2.5vw, 14px);
-            opacity: 0.9;
-        }
-
-        .content {
+        .tm-demo-shell .tm-content {
             padding: clamp(15px, 4vw, 40px);
             overflow-y: auto;
             flex: 1;
@@ -70,23 +67,23 @@ type: docs
             flex-direction: column;
         }
 
-        .progress-bar {
+        .tm-demo-shell .tm-progress-bar {
             width: 100%;
             height: clamp(2px, 1vw, 4px);
-            background: #e0e0e0;
+            background: #d7e3f1;
             border-radius: 2px;
             margin-bottom: clamp(15px, 3vw, 30px);
             overflow: hidden;
         }
 
-        .progress-fill {
+        .tm-demo-shell .tm-progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #1565c0 0%, #42a5f5 100%);
             width: 0%;
             transition: width 0.3s ease;
         }
 
-        .video-container {
+        .tm-demo-shell .tm-video-container {
             background: #000;
             border-radius: clamp(6px, 1.5vw, 8px);
             overflow: hidden;
@@ -99,36 +96,37 @@ type: docs
             width: 100%;
         }
 
-        .video-container video {
+        .tm-demo-shell .tm-video-container video {
             width: 100%;
             height: 100%;
             object-fit: contain;
         }
 
-        .no-video {
+        .tm-demo-shell .tm-no-video {
             color: #999;
             font-size: clamp(13px, 2.5vw, 16px);
             text-align: center;
             padding: clamp(10px, 3vw, 20px);
         }
 
-        .file-input-section {
+        .tm-demo-shell .tm-file-input-section {
             margin-bottom: clamp(15px, 3vw, 30px);
             padding: clamp(12px, 2.5vw, 20px);
-            background: #f5f5f5;
+            background: #f7fafc;
             border-radius: clamp(6px, 1.5vw, 8px);
             text-align: center;
             display: none;
+            border: 1px dashed rgba(21, 101, 192, 0.24);
         }
 
-        .file-input-section.show {
+        .tm-demo-shell .tm-file-input-section.show {
             display: block;
         }
 
-        .file-input-section label {
+        .tm-demo-shell .tm-file-input-section label {
             display: inline-block;
             padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px);
-            background: #667eea;
+            background: #1565c0;
             color: white;
             border-radius: clamp(4px, 1vw, 6px);
             cursor: pointer;
@@ -141,24 +139,24 @@ type: docs
             justify-content: center;
         }
 
-        .file-input-section label:hover {
-            background: #764ba2;
+        .tm-demo-shell .tm-file-input-section label:hover {
+            background: #0d47a1;
         }
 
-        .file-input-section input[type="file"] {
+        .tm-demo-shell .tm-file-input-section input[type="file"] {
             display: none;
         }
 
-        .files-list {
+        .tm-demo-shell .tm-files-list {
             margin-top: clamp(10px, 2vw, 15px);
             max-height: 200px;
             overflow-y: auto;
         }
 
-        .file-item {
+        .tm-demo-shell .tm-file-item {
             padding: clamp(6px, 1.5vw, 8px) clamp(8px, 2vw, 12px);
             background: white;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #d7e3f1;
             border-radius: clamp(3px, 1vw, 4px);
             margin-bottom: clamp(6px, 1vw, 8px);
             display: flex;
@@ -168,12 +166,12 @@ type: docs
             word-break: break-word;
         }
 
-        .file-item.current {
-            background: #e3f2fd;
-            border-color: #667eea;
+        .tm-demo-shell .tm-file-item.current {
+            background: #edf5ff;
+            border-color: #1565c0;
         }
 
-        .file-remove {
+        .tm-demo-shell .tm-file-remove {
             cursor: pointer;
             color: #f44336;
             font-weight: bold;
@@ -184,7 +182,7 @@ type: docs
             text-align: center;
         }
 
-        .button-group {
+        .tm-demo-shell .tm-button-group {
             display: flex;
             gap: clamp(10px, 2vw, 15px);
             justify-content: center;
@@ -193,7 +191,7 @@ type: docs
             width: 100%;
         }
 
-        .review-button {
+        .tm-demo-shell .tm-review-button {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -216,49 +214,49 @@ type: docs
             align-items: center;
         }
 
-        .review-button:active {
+        .tm-demo-shell .tm-review-button:active {
             transform: scale(0.95);
         }
 
         @media (hover: hover) {
-            .review-button:hover {
+            .tm-demo-shell .tm-review-button:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
         }
 
-        .review-button.approve {
+        .tm-demo-shell .tm-review-button.approve {
             border-color: #4caf50;
             color: #4caf50;
         }
 
-        .review-button.approve:hover {
+        .tm-demo-shell .tm-review-button.approve:hover {
             background: #f1f8e9;
         }
 
-        .review-button.warning {
-            border-color: #ff9800;
-            color: #ff9800;
+        .tm-demo-shell .tm-review-button.warning {
+            border-color: #f59e0b;
+            color: #b45309;
         }
 
-        .review-button.warning:hover {
-            background: #fff3e0;
+        .tm-demo-shell .tm-review-button.warning:hover {
+            background: #fff7e8;
         }
 
-        .review-button.alert {
+        .tm-demo-shell .tm-review-button.alert {
             border-color: #f44336;
             color: #f44336;
         }
 
-        .review-button.alert:hover {
+        .tm-demo-shell .tm-review-button.alert:hover {
             background: #ffebee;
         }
 
-        .icon {
+        .tm-demo-shell .tm-icon {
             font-size: clamp(24px, 5vw, 32px);
         }
 
-        .modal-overlay {
+        .tm-demo-shell .tm-modal-overlay {
             display: none !important;
             position: fixed !important;
             top: 0 !important;
@@ -277,13 +275,14 @@ type: docs
             border: none !important;
         }
 
-        .modal-overlay.active {
+        .tm-demo-shell .tm-modal-overlay.active {
             display: flex !important;
         }
 
-        .modal {
+        .tm-demo-shell .tm-modal {
             background: white !important;
-            border-radius: 12px !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(21, 101, 192, 0.12) !important;
             padding: 30px !important;
             max-width: 500px !important;
             width: 85vw !important;
@@ -296,13 +295,13 @@ type: docs
             margin: auto !important;
         }
 
-        .modal h2 {
+        .tm-demo-shell .tm-modal h2 {
             font-size: clamp(16px, 4vw, 20px);
             margin-bottom: clamp(12px, 2.5vw, 20px);
             color: #333;
         }
 
-        .modal h3 {
+        .tm-demo-shell .tm-modal h3 {
             font-size: clamp(11px, 2.5vw, 14px);
             font-weight: 600;
             margin-top: clamp(12px, 2.5vw, 20px);
@@ -312,39 +311,39 @@ type: docs
             letter-spacing: 0.5px;
         }
 
-        .checkbox-group {
+        .tm-demo-shell .tm-checkbox-group {
             display: flex;
             flex-direction: column;
             gap: clamp(8px, 1.5vw, 12px);
             margin-bottom: clamp(12px, 2vw, 20px);
         }
 
-        .checkbox-item {
+        .tm-demo-shell .tm-checkbox-item {
             display: flex;
             align-items: center;
             gap: clamp(6px, 1.5vw, 10px);
         }
 
-        .checkbox-item input[type="checkbox"] {
+        .tm-demo-shell .tm-checkbox-item input[type="checkbox"] {
             width: clamp(16px, 4vw, 18px);
             height: clamp(16px, 4vw, 18px);
             cursor: pointer;
-            accent-color: #667eea;
+            accent-color: #1565c0;
             flex-shrink: 0;
             min-width: 18px;
         }
 
-        .checkbox-item label {
+        .tm-demo-shell .tm-checkbox-item label {
             cursor: pointer;
             font-size: clamp(12px, 2.5vw, 14px);
             color: #333;
             flex: 1;
         }
 
-        textarea {
+        .tm-demo-shell textarea {
             width: 100%;
             padding: clamp(8px, 2vw, 12px);
-            border: 1px solid #e0e0e0;
+            border: 1px solid #d7e3f1;
             border-radius: clamp(4px, 1vw, 6px);
             font-family: inherit;
             font-size: clamp(12px, 2.5vw, 13px);
@@ -353,20 +352,20 @@ type: docs
             margin-bottom: clamp(12px, 2vw, 20px);
         }
 
-        textarea:focus {
+        .tm-demo-shell textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1565c0;
+            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.12);
         }
 
-        .modal-buttons {
+        .tm-demo-shell .tm-modal-buttons {
             display: flex;
             gap: clamp(6px, 2vw, 10px);
             justify-content: flex-end;
             flex-wrap: wrap;
         }
 
-        .btn {
+        .tm-demo-shell .tm-btn {
             padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px);
             border: none;
             border-radius: clamp(4px, 1vw, 6px);
@@ -380,38 +379,38 @@ type: docs
             justify-content: center;
         }
 
-        .btn-cancel {
+        .tm-demo-shell .tm-btn-cancel {
             background: #e0e0e0;
             color: #333;
         }
 
-        .btn-cancel:active {
+        .tm-demo-shell .tm-btn-cancel:active {
             background: #d0d0d0;
         }
 
         @media (hover: hover) {
-            .btn-cancel:hover {
+            .tm-demo-shell .tm-btn-cancel:hover {
                 background: #d0d0d0;
             }
         }
 
-        .btn-submit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .tm-demo-shell .tm-btn-submit {
+            background: linear-gradient(135deg, #1565c0 0%, #1e88e5 100%);
             color: white;
         }
 
-        .btn-submit:active {
+        .tm-demo-shell .tm-btn-submit:active {
             transform: scale(0.95);
         }
 
         @media (hover: hover) {
-            .btn-submit:hover {
+            .tm-demo-shell .tm-btn-submit:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
             }
         }
 
-        .status-message {
+        .tm-demo-shell .tm-status-message {
             text-align: center;
             padding: clamp(12px, 2.5vw, 20px);
             border-radius: clamp(6px, 1.5vw, 8px);
@@ -420,21 +419,21 @@ type: docs
             font-size: clamp(12px, 2.5vw, 14px);
         }
 
-        .status-message.show {
+        .tm-demo-shell .tm-status-message.show {
             display: block;
         }
 
-        .status-message.success {
+        .tm-demo-shell .tm-status-message.success {
             background: #e8f5e9;
             color: #2e7d32;
         }
 
-        .status-message.error {
+        .tm-demo-shell .tm-status-message.error {
             background: #ffebee;
             color: #c62828;
         }
 
-        .clip-counter {
+        .tm-demo-shell .tm-clip-counter {
             text-align: center;
             color: #666;
             font-size: clamp(12px, 2.5vw, 14px);
@@ -442,89 +441,88 @@ type: docs
         }
 
         @media (max-width: 600px) {
-            .content {
+            .tm-demo-shell .tm-content {
                 padding: clamp(12px, 3vw, 20px);
             }
 
-            .header h1 {
-                font-size: clamp(18px, 5vw, 24px);
+            .tm-demo-shell {
+                padding: 12px;
             }
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Therapist Misconduct Review Interface</h1>
-            <p>Demo - Video Review and Categorization System</p>
+</style>
+<div class="tm-demo-shell">
+    <div class="tm-page">
+    <div class="tm-container">
+        <div class="tm-header">
+            <p>Video review and categorization demo for screening short therapy clips for possible misconduct concerns.</p>
         </div>
 
-        <div class="content">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar"></div>
+        <div class="tm-content">
+            <div class="tm-progress-bar">
+                <div class="tm-progress-fill" id="tmProgressBar"></div>
             </div>
 
-            <div class="file-input-section" id="fileInputSection">
+            <div class="tm-file-input-section" id="tmFileInputSection">
                 <label for="videoUpload">📁 Select Video Clips (Multiple)</label>
                 <input type="file" id="videoUpload" multiple accept="video/*">
-                <div class="files-list" id="filesList"></div>
+                <div class="tm-files-list" id="tmFilesList"></div>
             </div>
 
-            <div class="status-message show" id="loadingMessage">Loading therapy clips...</div>
-            <div class="status-message" id="statusMessage"></div>
+            <div class="tm-status-message show" id="tmLoadingMessage">Loading therapy clips...</div>
+            <div class="tm-status-message" id="tmStatusMessage"></div>
 
-            <div class="video-container" id="videoContainer">
-                <div class="no-video">Loading...</div>
+            <div class="tm-video-container" id="tmVideoContainer">
+                <div class="tm-no-video">Loading...</div>
             </div>
 
-            <div class="button-group">
-                <button class="review-button approve" onclick="submitReview('approve')">
-                    <span class="icon">✓</span>
+            <div class="tm-button-group">
+                <button class="tm-review-button approve" onclick="submitReview('approve')">
+                    <span class="tm-icon">✓</span>
                     <span>No Misconduct</span>
                 </button>
-                <button class="review-button warning" onclick="submitReview('warning')">
-                    <span class="icon">⚠️</span>
+                <button class="tm-review-button warning" onclick="submitReview('warning')">
+                    <span class="tm-icon">⚠️</span>
                     <span>Possible Issue</span>
                 </button>
-                <button class="review-button alert" onclick="submitReview('alert')">
-                    <span class="icon">🚨</span>
+                <button class="tm-review-button alert" onclick="submitReview('alert')">
+                    <span class="tm-icon">🚨</span>
                     <span>Suspected Misconduct</span>
                 </button>
             </div>
 
-            <div class="clip-counter" id="clipCounter"></div>
+            <div class="tm-clip-counter" id="tmClipCounter"></div>
         </div>
     </div>
 
     <!-- Modal for misconduct details -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <h2 id="modalTitle">Report Issue Details</h2>
+    <div class="tm-modal-overlay" id="tmModalOverlay" aria-hidden="true">
+        <div class="tm-modal" role="dialog" aria-modal="true" aria-labelledby="tmModalTitle">
+            <h2 id="tmModalTitle">Report Issue Details</h2>
 
             <div>
                 <h3>Type of Concern</h3>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
+                <div class="tm-checkbox-group">
+                    <div class="tm-checkbox-item">
                         <input type="checkbox" id="misconduct-touch" value="inappropriate-touch">
                         <label for="misconduct-touch">Inappropriate Touch</label>
                     </div>
-                    <div class="checkbox-item">
+                    <div class="tm-checkbox-item">
                         <input type="checkbox" id="misconduct-boundary" value="boundary-violation">
                         <label for="misconduct-boundary">Boundary Violation</label>
                     </div>
-                    <div class="checkbox-item">
+                    <div class="tm-checkbox-item">
                         <input type="checkbox" id="misconduct-language" value="inappropriate-language">
                         <label for="misconduct-language">Inappropriate Language/Comments</label>
                     </div>
-                    <div class="checkbox-item">
+                    <div class="tm-checkbox-item">
                         <input type="checkbox" id="misconduct-neglect" value="neglect">
                         <label for="misconduct-neglect">Apparent Neglect or Inattention</label>
                     </div>
-                    <div class="checkbox-item">
+                    <div class="tm-checkbox-item">
                         <input type="checkbox" id="misconduct-privacy" value="privacy-violation">
                         <label for="misconduct-privacy">Privacy/Confidentiality Concern</label>
                     </div>
-                    <div class="checkbox-item">
+                    <div class="tm-checkbox-item">
                         <input type="checkbox" id="misconduct-other" value="other-concern">
                         <label for="misconduct-other">Other Concern</label>
                     </div>
@@ -534,27 +532,29 @@ type: docs
             <h3>Additional Notes</h3>
             <textarea id="notesTextarea" placeholder="Provide any additional context or observations..."></textarea>
 
-            <div class="modal-buttons">
-                <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-submit" onclick="submitIssueReport()">Submit & Next</button>
+            <div class="tm-modal-buttons">
+                <button class="tm-btn tm-btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="tm-btn tm-btn-submit" onclick="submitIssueReport()">Submit & Next</button>
             </div>
         </div>
     </div>
+</div>
+</div>
 
-    <script>
+<script>
         let videoFiles = [];
         let currentClipIndex = 0;
         let pendingReviewType = null;
 
-        const videoContainer = document.getElementById('videoContainer');
-        const filesList = document.getElementById('filesList');
-        const progressBar = document.getElementById('progressBar');
-        const statusMessage = document.getElementById('statusMessage');
-        const loadingMessage = document.getElementById('loadingMessage');
-        const clipCounter = document.getElementById('clipCounter');
+        const videoContainer = document.getElementById('tmVideoContainer');
+        const filesList = document.getElementById('tmFilesList');
+        const progressBar = document.getElementById('tmProgressBar');
+        const statusMessage = document.getElementById('tmStatusMessage');
+        const loadingMessage = document.getElementById('tmLoadingMessage');
+        const clipCounter = document.getElementById('tmClipCounter');
         const videoUpload = document.getElementById('videoUpload');
-        const modalOverlay = document.getElementById('modalOverlay');
-        const fileInputSection = document.getElementById('fileInputSection');
+        const modalOverlay = document.getElementById('tmModalOverlay');
+        const fileInputSection = document.getElementById('tmFileInputSection');
 
         // Auto-load clips on page load
         window.addEventListener('load', () => {
@@ -606,9 +606,9 @@ type: docs
             }
 
             // Fallback: show file picker
-            loadingMessage.textContent = 'For local testing: drag & drop video files, or use "hugo server" to preview with auto-loaded videos.';
-            loadingMessage.classList.add('show');
-            fileInputSection.classList.add('show');
+                loadingMessage.textContent = 'For local testing: drag & drop video files, or use "hugo server" to preview with auto-loaded videos.';
+                loadingMessage.classList.add('show');
+                fileInputSection.classList.add('show');
         }
 
         async function loadVideosFromUrls(urls) {
@@ -643,11 +643,11 @@ type: docs
             filesList.innerHTML = '';
             videoFiles.forEach((file, index) => {
                 const fileItem = document.createElement('div');
-                fileItem.className = `file-item ${index === currentClipIndex ? 'current' : ''}`;
+                fileItem.className = `tm-file-item ${index === currentClipIndex ? 'current' : ''}`;
                 const filename = file.name || file.filename || 'video.mp4';
                 fileItem.innerHTML = `
                     <span>${index + 1}. ${filename}</span>
-                    <span class="file-remove" onclick="removeFile(${index})">✕</span>
+                    <span class="tm-file-remove" onclick="removeFile(${index})">✕</span>
                 `;
                 filesList.appendChild(fileItem);
             });
@@ -664,7 +664,7 @@ type: docs
 
         function loadClip() {
             if (videoFiles.length === 0) {
-                videoContainer.innerHTML = '<div class="no-video">Select video files to begin review</div>';
+                videoContainer.innerHTML = '<div class="tm-no-video">Select video files to begin review</div>';
                 clipCounter.textContent = '';
                 progressBar.style.width = '0%';
                 return;
@@ -706,7 +706,7 @@ type: docs
                 // Show modal for warning or alert
                 pendingReviewType = type;
                 const modalTitle = type === 'warning' ? 'Report Possible Issue' : 'Report Suspected Misconduct';
-                document.getElementById('modalTitle').textContent = modalTitle;
+                document.getElementById('tmModalTitle').textContent = modalTitle;
                 clearModalForm();
                 openModal();
             }
@@ -714,21 +714,25 @@ type: docs
 
         function openModal() {
             modalOverlay.classList.add('active');
+            modalOverlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             modalOverlay.classList.remove('active');
+            modalOverlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
             clearModalForm();
             pendingReviewType = null;
         }
 
         function clearModalForm() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            modalOverlay.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
             document.getElementById('notesTextarea').value = '';
         }
 
         function submitIssueReport() {
-            const selectedTypes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+            const selectedTypes = Array.from(modalOverlay.querySelectorAll('input[type="checkbox"]:checked'))
                 .map(cb => cb.value);
             const notes = document.getElementById('notesTextarea').value;
 
@@ -761,7 +765,7 @@ type: docs
                 } else {
                     showMessage('✓ Review Complete! All clips processed.', 'success');
                     setTimeout(() => {
-                        videoContainer.innerHTML = '<div class="no-video">All clips reviewed!</div>';
+                        videoContainer.innerHTML = '<div class="tm-no-video">All clips reviewed!</div>';
                         updateFilesList();
                     }, 1500);
                 }
@@ -770,7 +774,7 @@ type: docs
 
         function showMessage(message, type) {
             statusMessage.textContent = message;
-            statusMessage.className = `status-message show ${type}`;
+            statusMessage.className = `tm-status-message show ${type}`;
             setTimeout(() => {
                 statusMessage.classList.remove('show');
             }, 3000);
@@ -782,8 +786,5 @@ type: docs
                 closeModal();
             }
         });
-    </script>
-</body>
-</html>
+</script>
 {{< /rawhtml >}}
-
