@@ -1,0 +1,9 @@
+name = "starter-hugo-academic"
+compatibility_date = "2026-06-03"
+
+[build]
+command = "./scripts/build-hugo.sh"
+watch_dir = ["content", "layouts", "assets", "static", "config"]
+
+[assets]
+directory = "./public"
