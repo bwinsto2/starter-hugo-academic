@@ -1,0 +1,46 @@
+{{/* Table Shortcode for Wowchemy, updated for modern Hugo resource APIs. */}}
+
+{{ $src := .Get "path" }}
+{{ $delimiter := .Get "delimiter" | default "," }}
+{{ $useHeaderRow := (eq (lower (.Get "header")) "true") | default true }}
+{{ $caption := .Get "caption" }}
+
+{{ $isRemote := strings.HasPrefix $src "http" }}
+{{ $resource := false }}
+
+{{ if $isRemote }}
+  {{ $resource = resources.GetRemote $src }}
+{{ else }}
+  {{ $resource = .Page.Resources.GetMatch $src }}
+  {{ if not $resource }}
+    {{ $resource = resources.Get $src }}
+  {{ end }}
+{{ end }}
+
+{{ if not $resource }}
+  {{ errorf "Could not load table resource %q for %q" $src .Page.File.Path }}
+{{ end }}
+
+{{ $rows := $resource | transform.Unmarshal (dict "delimiter" $delimiter) }}
+
+<table class="table">
+  {{ if $useHeaderRow }}
+    {{ $headerRow := index $rows 0 }}
+    {{ $rows = after 1 $rows }}
+    <tr>{{ range $headerRow }}<th>{{ . | markdownify | emojify }}</th>{{ end }}</tr>
+  {{ end }}
+  {{ range $rows }}
+    <tr>
+      {{ range . }}
+        {{ if (findRE "^\\d+$" .) }}
+          <td data-table-dtype="number">{{ . }}</td>
+        {{ else }}
+          <td data-table-dtype="text">{{ . | markdownify | emojify }}</td>
+        {{ end }}
+      {{ end }}
+    </tr>
+  {{ end }}
+  {{ if $caption }}
+    <caption>{{ $caption | markdownify | emojify }}</caption>
+  {{ end }}
+</table>

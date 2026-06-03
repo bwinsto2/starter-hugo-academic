@@ -16,6 +16,9 @@ main:
   - name: Posters
     url: '#posters'
     weight: 21
+  - name: Papers
+    url: '#papers'
+    weight: 25
   - name: SciComm
     url: '#scicomm'
     weight: 30

@@ -106,6 +106,24 @@ sections:
       subtitle: ''
       text: |-
         {{< gallery album="posters" >}}
+  - block: collection
+    id: papers
+    content:
+      title: Papers
+      text: Selected publications and preprints.
+      count: 5
+      filters:
+        folders:
+          - publication
+        featured_only: true
+      sort_by: Date
+      order: desc
+      archive:
+        enable: true
+        text: See all papers
+        link: /publication/
+    design:
+      view: citation
   - block: markdown
     id: scicomm
     content:
