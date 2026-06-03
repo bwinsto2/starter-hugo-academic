@@ -19,3 +19,19 @@
   border-radius: 5px; /* Rounded corners for the details box */
   padding: 15px; /* Padding inside the collapsible content */
 }
+
+#papers .pub-list-item {
+  max-width: 100%;
+}
+
+#papers .li-cite-author,
+#papers .pub-list-item a {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 992px) {
+  #papers .pub-list-item {
+    font-size: 1.08rem;
+    line-height: 1.65;
+  }
+}

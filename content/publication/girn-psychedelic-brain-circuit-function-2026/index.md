@@ -42,7 +42,7 @@ publication_types: ["2"]
 
 # Publication name and optional abbreviated publication name.
 publication: "*Nature Medicine*"
-publication_short: "Nat Med"
+publication_short: "Nature Medicine"
 
 abstract: "Psychedelic drugs are re-emerging as promising scientific and clinical tools. However, despite a rapidly expanding literature on their therapeutic value, the neural mechanisms underlying psychedelic effects remain unclear. Resting-state functional magnetic resonance imaging studies of acute psychedelic effects, conducted independently by several research groups, have so far yielded fragmented and sometimes inconsistent findings. Here, to help facilitate greater convergence, we conducted a mega-analysis integrating 11 independent resting-state functional magnetic resonance imaging datasets across five psychedelic drugs (psilocybin, lysergic acid diethylamide, mescaline, N,N-dimethyltryptamine and ayahuasca) from research groups spanning three continents and five countries. By applying a uniform preprocessing pipeline and a Bayesian hierarchical modeling framework, we discovered several common features in the induced alterations to brain function across drugs and sites. Most prominently, we identified a core signature of increased functional connectivity between transmodal (default, frontoparietal and limbic) and unimodal networks (visual and somatomotor), with subnetwork specificity. Furthermore, key subcortical regions (thalamus, caudate and putamen) and the cerebellum exhibited altered coupling with sensorimotor networks. In contrast to several single-site reports, Bayesian modeling revealed weak-to-moderate and selective reductions in within-network functional connectivity, with substantial variability across drugs and networks. Together, these findings extend past work by demonstrating that psychedelics reconfigure large-scale cortical organization while selectively engaging subcortical circuitry. This study provides the most comprehensive synthesis of psychedelic brain action to date, helping resolve inconsistencies and offering a probabilistic map of how psychedelics alter large-scale brain organization."
 
@@ -61,7 +61,7 @@ url_dataset: ""
 url_poster: ""
 url_project: ""
 url_slides: ""
-url_source: "https://doi.org/10.1038/s41591-026-04287-9"
+url_source: ""
 url_video: ""
 
 image:

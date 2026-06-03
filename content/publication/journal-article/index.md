@@ -1,5 +1,9 @@
 ---
 title: "An example journal article"
+build:
+  list: never
+  render: never
+draft: true
 authors:
 - admin
 - Robert Ford

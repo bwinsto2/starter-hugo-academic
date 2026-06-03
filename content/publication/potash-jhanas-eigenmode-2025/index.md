@@ -20,7 +20,7 @@ publishDate: "2025-02-01T00:00:00Z"
 publication_types: ["2"]
 
 publication: "*Cerebral Cortex*"
-publication_short: "Cereb Cortex"
+publication_short: "Cerebral Cortex"
 
 abstract: "Advanced meditation has been associated with both short- and long-term changes in well-being, insight, and bliss, yet most neuroimaging work has relied on spatially localized analyses. This study applies geometric eigenmode decomposition to ultrahigh field 7T fMRI data from an intensely sampled case study of advanced concentrative absorption meditation to characterize distributed cortical dynamics. Compared with a non-meditative control task, advanced concentrative absorption meditation states showed elevated global brain state power and distinctive energy patterns, with mid-frequency spectrum power and energy following a non-random cubic trajectory across the meditation sequence. These brain state differences were meaningfully associated with subjective reports of attention, intensity, and sensation. The results highlight distributed neural signatures of highly refined conscious states and underscore both similarities and differences between advanced meditation and psychedelic altered states."
 
@@ -39,7 +39,7 @@ url_dataset: ""
 url_poster: ""
 url_project: ""
 url_slides: ""
-url_source: "https://doi.org/10.1093/cercor/bhaf039"
+url_source: ""
 url_video: ""
 
 image:

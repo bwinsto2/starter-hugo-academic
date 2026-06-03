@@ -1,10 +1,13 @@
 ---
 title: Gradients Poster
+build:
+  list: never
+  render: never
 publication_types:
   - "0"
 authors: []
 abstract: afsdf
-draft: false
+draft: true
 featured: false
 image:
   filename: featured
