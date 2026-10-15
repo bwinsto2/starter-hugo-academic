@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>PATCH administration</title>
+    <link rel="stylesheet" href="/patch-meetings/style.css" />
+    <script src="/patch-meetings/admin/admin.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <a href="/patch-meetings/">← Availability</a>
+        <h1>PATCH administration</h1>
+      </header>
+      <section class="week">
+        <form id="login">
+          <label for="credential">Administrator credential</label>
+          <div class="inline">
+            <input
+              id="credential"
+              type="password"
+              autocomplete="off"
+              required
+            /><button>View status</button>
+          </div>
+          <p class="hint">
+            Separate from your participant link. Kept in this tab’s memory only.
+          </p>
+        </form>
+      </section>
+      <p id="status" role="status"></p>
+      <div id="admin-results" hidden>
+        <h2 id="date"></h2>
+        <p id="summary"></p>
+        <button id="pause">Pause automated mail</button>
+        <h2>Responses</h2>
+        <ul id="people"></ul>
+        <h2>Delivery log</h2>
+        <p>
+          “Sent” means accepted by Resend. Check its dashboard for bounces or
+          downstream failures. Use the documented commands to retry failures.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Delivery</th>
+              <th>State</th>
+              <th>Attempts</th>
+              <th>Last error</th>
+            </tr>
+          </thead>
+          <tbody id="deliveries"></tbody>
+        </table>
+        <h2>Group availability</h2>
+        <ul id="heatmap"></ul>
+      </div>
+    </main>
+  </body>
+</html>

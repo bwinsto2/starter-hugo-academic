@@ -12,3 +12,10 @@ node_modules/
 .bin/
 go.sum
 .hugo_build.lock
+
+# PATCH credentials and local state
+.dev.vars*
+.env*
+.patch-*
+.wrangler/
+work/

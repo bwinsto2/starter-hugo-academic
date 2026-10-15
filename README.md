@@ -48,3 +48,7 @@ We're an open source movement that depends on your support to stay online and th
 * [Version 5.0 (February 2021)](https:&#x2F;&#x2F;wowchemy.com&#x2F;blog&#x2F;version-5.0-february-2021&#x2F;)
 * [Version 5.0 Beta 3 (February 2021)](https:&#x2F;&#x2F;wowchemy.com&#x2F;blog&#x2F;version-5.0-beta-3-february-2021&#x2F;)
 <!--END_SECTION:news-->
+
+## PATCH Friday availability
+
+The unlisted `/patch-meetings/` scheduler uses the existing Hugo site, a Cloudflare Worker and D1. It includes personal links, a protected admin view and scheduled transactional mail. Mail is disabled by default. See [the setup and operations guide](docs/patch-meetings.md) for migrations, secure roster initialization, testing, activation and maintenance.

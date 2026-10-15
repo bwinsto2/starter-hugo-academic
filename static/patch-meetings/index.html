@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>PATCH · Friday availability</title>
+    <link rel="stylesheet" href="/patch-meetings/style.css" />
+    <script src="/patch-meetings/app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <a class="brand" href="/">Brian Winston</a
+        ><span class="tag"
+          ><img src="/images/PATCH_logo.png" alt="" width="36" height="36" />
+          PATCH STUDY TEAM</span
+        >
+        <h1>Find our Friday overlap.</h1>
+        <p class="intro">A little planning. More time together.</p>
+      </header>
+      <section class="week">
+        <div>
+          <p class="eyebrow">FRIDAY AVAILABILITY</p>
+          <h2 id="date">Loading Friday…</h2>
+          <p>
+            8:00 AM–6:00 PM · <strong>Eastern time (America/New_York)</strong>
+          </p>
+        </div>
+        <a id="current" href="/patch-meetings/" hidden>Open current week →</a>
+      </section>
+      <p id="notice" role="status" aria-live="polite">
+        Loading the team schedule…
+      </p>
+      <section id="link-request" hidden>
+        <h2>Your personal link</h2>
+        <p>
+          Open your invitation to select availability, or request your link
+          here. The group results below are shared with anyone who has this page
+          address.
+        </p>
+        <form id="request">
+          <label for="email">Team email address</label>
+          <div class="inline">
+            <input
+              id="email"
+              type="email"
+              autocomplete="email"
+              required
+              maxlength="254"
+            /><button>Send my link</button>
+          </div>
+          <p id="request-status" role="status"></p>
+        </form>
+      </section>
+      <section id="editor" hidden>
+        <h2 id="greeting"></h2>
+        <p>
+          Drag to select a range; start on a selected slot to clear it. Use Tab
+          and Space for individual slots. On a phone, turn on touch selection
+          before dragging.
+        </p>
+        <label
+          ><input id="touch" type="checkbox" /> Enable touch selection (turn off
+          to scroll the grid)</label
+        >
+        <div class="inline options">
+          <label
+            ><input id="unavailable" type="checkbox" /> Unavailable all
+            day</label
+          ><button id="clear" class="secondary" type="button">
+            Clear selection
+          </button>
+        </div>
+      </section>
+      <div class="schedule-layout">
+        <section class="schedule">
+          <div class="section-title">
+            <h2>Team overlap</h2>
+            <span id="count"></span>
+          </div>
+          <p class="legend">
+            Saved availability: <span class="swatch low"></span> 0
+            <span class="swatch high"></span> all
+            <span class="own-key">✓ Your selection</span>
+          </p>
+          <p class="hint">
+            Select or focus a time to see names. Each row is 15 minutes.
+          </p>
+          <div
+            id="slots"
+            class="slots"
+            aria-label="Friday availability intervals"
+          ></div>
+          <div id="details" role="status" aria-live="polite">
+            Focus a time to see who is available.
+          </div>
+          <div id="save-bar" hidden>
+            <button id="save" type="button">Submit availability</button
+            ><span id="save-status" role="status" aria-live="polite"></span>
+          </div>
+        </section>
+        <aside>
+          <h2>Team responses</h2>
+          <p>Only submitted selections appear in the heatmap.</p>
+          <ul id="people"></ul>
+          <p class="hint">
+            Results refresh every 30 seconds. An empty grid is not a response.
+          </p>
+        </aside>
+      </div>
+      <footer>
+        PATCH · Availability collection · All schedule times are Eastern.
+      </footer>
+    </main>
+  </body>
+</html>
