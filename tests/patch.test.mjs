@@ -94,6 +94,7 @@ beforeEach(async () => {
     ),
   );
   env.MAIL_MODE = "disabled";
+  delete env.MAIL_START_AT;
   mail = [];
   fail = false;
 });
@@ -318,6 +319,109 @@ test("Monday invitations individually sent once and Wednesday reminders target o
     mail.filter((m) => m.subject.includes("everyone responded")).length,
     1,
   );
+});
+test("scheduled launch blocks every live sending path until Monday and starts the correct Friday once", async (t) => {
+  t.mock.timers.enable({
+    apis: ["Date"],
+    now: new Date("2026-10-16T17:00:00Z"),
+  });
+  env.MAIL_MODE = "live";
+  env.MAIL_START_AT = "2026-10-19T13:00:00Z";
+  await unpause();
+  await schedule(env);
+  assert.equal(
+    (await env.DB.prepare("SELECT count(*) AS n FROM jobs").first()).n,
+    0,
+  );
+  for (let i = 0; i < 5; i++) await save(i);
+  // A queued current-week completion and recovery request must not bypass launch.
+  await request("/api/patch/link", { body: { email: people[0].email } });
+  assert.equal(
+    (await env.DB.prepare("SELECT count(*) AS n FROM jobs").first()).n,
+    1,
+  );
+  assert.equal(
+    (await env.DB.prepare("SELECT attempts FROM deliveries").first()).attempts,
+    0,
+  );
+  for (const time of ["2026-10-18T10:00:00Z", "2026-10-19T12:59:59Z"]) {
+    t.mock.timers.setTime(new Date(time).getTime());
+    await schedule(env);
+    await drain(env);
+    assert.equal(mail.length, 0);
+    assert.equal(
+      (await env.DB.prepare("SELECT count(*) AS n FROM jobs").first()).n,
+      1,
+    );
+  }
+  const beforeStart = await request("/api/patch/admin", {
+    token: env.ADMIN_TOKEN,
+  });
+  assert.equal(beforeStart.data.mailWaitingToStart, true);
+  assert.equal(beforeStart.data.mailStartsAt, env.MAIL_START_AT);
+  t.mock.timers.setTime(new Date("2026-10-19T13:00:00Z").getTime());
+  await schedule(env);
+  assert.equal(mail.length, 5);
+  assert.equal(new Set(mail.map((m) => m.to[0])).size, 5);
+  assert(
+    mail.every(
+      (m) =>
+        m.text.includes("week=2026-10-23") &&
+        m.subject.includes("Friday, October 23, 2026"),
+    ),
+  );
+  assert.equal(
+    (
+      await env.DB.prepare(
+        "SELECT state FROM deliveries WHERE kind='complete'",
+      ).first()
+    ).state,
+    "skipped",
+  );
+  assert.equal(
+    (
+      await env.DB.prepare(
+        "SELECT count(*) AS n FROM deliveries WHERE kind='remind'",
+      ).first()
+    ).n,
+    0,
+  );
+  t.mock.timers.setTime(new Date("2026-10-19T13:15:00Z").getTime());
+  await schedule(env);
+  assert.equal(mail.length, 5);
+  const afterStart = await request("/api/patch/admin", {
+    token: env.ADMIN_TOKEN,
+  });
+  assert.equal(afterStart.data.mailWaitingToStart, false);
+  t.mock.timers.setTime(new Date("2026-10-21T13:59:59Z").getTime());
+  await schedule(env);
+  assert.equal(mail.length, 5);
+  t.mock.timers.setTime(new Date("2026-10-21T14:00:00Z").getTime());
+  await schedule(env);
+  assert.equal(mail.length, 11); // five missing-person reminders and one admin status
+});
+test("invalid scheduled launch fails closed for scheduler and direct draining", async () => {
+  env.MAIL_MODE = "live";
+  env.MAIL_START_AT = "invalid";
+  await unpause();
+  await assert.rejects(schedule(env), /MAIL_START_AT/);
+  await assert.rejects(drain(env), /MAIL_START_AT/);
+  assert.equal(mail.length, 0);
+});
+test("weekly mail stays at 9 AM Eastern after the scheduled launch and DST change", async (t) => {
+  t.mock.timers.enable({
+    apis: ["Date"],
+    now: new Date("2026-11-02T13:59:59Z"),
+  });
+  env.MAIL_MODE = "live";
+  env.MAIL_START_AT = "2026-10-19T13:00:00Z";
+  await unpause();
+  await schedule(env);
+  assert.equal(mail.length, 0);
+  t.mock.timers.setTime(new Date("2026-11-02T14:00:00Z").getTime());
+  await schedule(env);
+  assert.equal(mail.length, 5);
+  assert(mail.every((m) => m.text.includes("week=2026-11-06")));
 });
 test("everyone responded Wednesday skips reminders/status", async () => {
   for (let i = 0; i < 5; i++) await save(i);

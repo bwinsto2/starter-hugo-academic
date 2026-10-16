@@ -28,6 +28,18 @@ async function load() {
     $("date").textContent = data.friday + " · Friday (Eastern)";
     $("summary").textContent =
       `${data.submitted} of ${data.expected} responses · Mail mode: ${data.mailMode} · Paused: ${data.mailPaused}`;
+    if (data.mailWaitingToStart) {
+      const start = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York",
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        timeZoneName: "short",
+      }).format(new Date(data.mailStartsAt));
+      $("summary").textContent += ` · Scheduled start: ${start}`;
+    }
     paused = data.mailPaused;
     $("pause").textContent = paused ? "Resume mail" : "Pause mail";
     $("people").replaceChildren();

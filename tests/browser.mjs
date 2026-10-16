@@ -247,10 +247,15 @@ try {
   await page.locator("#credential").fill(token);
   await page.getByRole("button", { name: "View status" }).click();
   await page.getByText("Administrator authorization required.").waitFor();
+  env.MAIL_MODE = "live";
+  env.MAIL_START_AT = new Date(Date.now() + 86400000).toISOString();
   await page.locator("#credential").fill(env.ADMIN_TOKEN);
   await page.getByRole("button", { name: "View status" }).click();
   await page.locator("#admin-results:not([hidden])").waitFor();
   assert.equal(await page.locator("#heatmap li").count(), 40);
+  assert(
+    (await page.locator("#summary").textContent()).includes("Scheduled start:"),
+  );
   assert.deepEqual(errors, []);
   console.log(
     "PASS: one-screen layout at 8 desktop/phone sizes, separate personal/group grids, hover details, drag/keyboard, failed save retention, save/edit/reload, unavailable, touch, historical and admin. No real emails sent.",

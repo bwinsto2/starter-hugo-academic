@@ -24,6 +24,8 @@ crons = ["*/15 * * * *"]
 
 [vars]
 PUBLIC_ORIGIN = "https://brianwinston.com"
-MAIL_MODE = "disabled"
+MAIL_MODE = "live"
+# First invitations: Monday October 19, 2026 at 9 AM Eastern, for Friday October 23.
+MAIL_START_AT = "2026-10-19T13:00:00Z"
 # Set MAIL_FROM, ADMIN_EMAIL, and REPLY_TO via secrets or .dev.vars.
 # LINK_SECRET, ADMIN_TOKEN and RESEND_API_KEY must be secrets.

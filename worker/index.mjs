@@ -170,6 +170,8 @@ async function snapshot(env, friday, who = null, isAdmin = false) {
           ),
           mailPaused: await paused(env),
           mailMode: env.MAIL_MODE || "disabled",
+          mailStartsAt: env.MAIL_START_AT || null,
+          mailWaitingToStart: env.MAIL_MODE === "live" && !liveMailStarted(env),
         }
       : {}),
   };
@@ -185,6 +187,13 @@ async function paused(env) {
     (await q(env, "SELECT value FROM settings WHERE key='mail_paused'").first())
       ?.value !== "false"
   );
+}
+function liveMailStarted(env, now = new Date()) {
+  if (!env.MAIL_START_AT) return true;
+  const start = Date.parse(env.MAIL_START_AT);
+  if (!Number.isFinite(start))
+    throw new Error("MAIL_START_AT must be a valid timestamp.");
+  return now.getTime() >= start;
 }
 function jobStatements(env, id, friday, kind, recipients) {
   const now = iso();
@@ -234,7 +243,12 @@ export async function queueCompletion(env, friday) {
 export async function schedule(env, now = new Date()) {
   const friday = currentFriday(now);
   await ensureWeek(env, friday);
-  if (env.MAIL_MODE !== "live" || (await paused(env))) return;
+  if (
+    env.MAIL_MODE !== "live" ||
+    !liveMailStarted(env, now) ||
+    (await paused(env))
+  )
+    return;
   const due = dueJobs(now),
     people = await rows(q(env, "SELECT id FROM participants WHERE active=1"));
   if (due.invitations)
@@ -318,6 +332,13 @@ function escape(s) {
 }
 async function mailContent(env, d) {
   const job = await q(env, "SELECT * FROM jobs WHERE id=?", d.job_id).first();
+  // A scheduled launch must not release completion notices from an earlier poll.
+  if (
+    env.MAIL_MODE === "live" &&
+    env.MAIL_START_AT &&
+    job.friday < currentFriday(new Date(env.MAIL_START_AT))
+  )
+    return null;
   const p = d.participant_id
     ? await q(
         env,
@@ -380,7 +401,12 @@ async function mailContent(env, d) {
   };
 }
 export async function drain(env) {
-  if (!["live", "test"].includes(env.MAIL_MODE) || (await paused(env))) return;
+  if (
+    !["live", "test"].includes(env.MAIL_MODE) ||
+    (env.MAIL_MODE === "live" && !liveMailStarted(env)) ||
+    (await paused(env))
+  )
+    return;
   if (
     !env.RESEND_API_KEY ||
     !env.MAIL_FROM ||
@@ -602,7 +628,12 @@ async function api(req, env, ctx, url) {
       "SELECT id FROM participants WHERE email=? COLLATE NOCASE AND active=1",
       email,
     ).first();
-    if (p && env.MAIL_MODE === "live" && !(await paused(env))) {
+    if (
+      p &&
+      env.MAIL_MODE === "live" &&
+      liveMailStarted(env) &&
+      !(await paused(env))
+    ) {
       const friday = currentFriday();
       await ensureWeek(env, friday);
       await env.DB.batch(
