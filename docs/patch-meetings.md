@@ -1,6 +1,17 @@
 # PATCH Friday availability
 
-Implemented in the existing Hugo/Cloudflare website. **Not deployed; real automated mail is disabled.** No team email was sent during development. The D1 ID in `wrangler.toml` is a placeholder. Do not deploy until it is replaced.
+Implemented and deployed in the existing Hugo/Cloudflare website. **Team automation remains disabled and paused.** The production D1 binding is configured in `wrangler.toml`. Do not create a replacement database or rotate `LINK_SECRET` when continuing activation.
+
+## Activation record — October 16, 2026
+
+- Deployed the existing feature branch to `brianwinstonwebsite`, preserving its existing `brianwinston.com` custom-domain mapping and Hugo assets. Initial scheduler deployment version: `82d73bc6-a439-4c9a-ab2c-97bf4f524f8a`.
+- Created production D1 `patch-meetings` (`d598e825-36ff-4e07-937a-4334ee9dcb3b`) and applied `0001_patch.sql`. Initialized exactly five active participants from the ignored 0600 roster input using D1 prepared parameters, after verifying the database was empty and paused. Names and stable IDs follow the roster below; emails remain outside Git.
+- Configured all six secrets: `LINK_SECRET`, `ADMIN_TOKEN`, `RESEND_API_KEY`, `MAIL_FROM`, `ADMIN_EMAIL`, and `REPLY_TO`. No signing/admin secrets existed on the Worker before setup. Generated independent credentials; retain the signing secret for stable links. Private backup: ignored `.patch-activation-secrets.json` (0600, signing/admin credentials only). Move these credentials to a password manager. Brian's private link is in ignored `.patch-brian-link.txt` (0600).
+- Verified deployed `MAIL_MODE=disabled`, D1 `mail_paused=true`, D1/assets bindings, all secret names, and the installed `*/15 * * * *` trigger through Cloudflare's API. Trigger installation alone does not establish successful cron execution.
+- Inspected existing DNS records for the sending subdomain; changed none. The Resend key is send-only: domain-status and message-log reads are unavailable. The user reports the sending domain verified. A direct sender-verification message to Brian only was accepted by Resend; this does not verify inbox delivery or the deployed Worker queue. No other participant was emailed, and no production availability was entered.
+- Independently checked Resend's [pricing](https://resend.com/pricing), [domain requirements](https://resend.com/docs/dashboard/domains/introduction), and [idempotency documentation](https://resend.com/docs/dashboard/emails/idempotency-keys). Published free transactional allowance: 3,000 emails/month and 100/day; this scheduler's expected volume fits. Overage billing is opt-in; no purchase, plan change, or paid upgrade was performed. The documented idempotency retention is 24 hours. Account-specific billing settings and usage were not available through the send-only key.
+- Validation: all 14 backend tests, Hugo Extended 0.111.3 production build, and desktop/mobile Chromium smoke tests passed. Checked 36 generated discovery files; none contained PATCH URLs. Browser tests used isolated local D1 and synthetic identities, without real mail.
+- Remaining activation checks: the execution environment's proxy currently blocks `brianwinston.com` with HTTP 403. Add that hostname to the environment's allowed hosts, then verify production page/API/admin access and Brian's save/edit flow. Run the five redirected invitation tests using the procedure below; restore both mail stops afterward. Confirm receipt with Brian and inspect Resend delivery events before separately authorizing live team mail. Keep PR #1 draft and unmerged.
 
 ## Architecture and behavior
 
@@ -49,7 +60,7 @@ In another shell set `PATCH_ORIGIN=http://localhost:8787` and `PATCH_ADMIN_TOKEN
 ## Cloudflare activation
 
 1. Authenticate in your own shell with `npx wrangler login` (or a suitably scoped Cloudflare API token). Confirm the selected account and existing `brianwinstonwebsite` Worker/custom domain. Preserve its existing domain mapping; no new website or framework is needed.
-2. Create D1:
+2. For a fresh installation, create D1 (the production database above already exists; reuse it):
 
    ```sh
    npx wrangler d1 create patch-meetings
@@ -71,7 +82,7 @@ In another shell set `PATCH_ORIGIN=http://localhost:8787` and `PATCH_ADMIN_TOKEN
 
    Generate LINK_SECRET and ADMIN_TOKEN **independently**, for example with `openssl rand -hex 32`, and store each in a password manager. Paste secret values at Wrangler's prompts, not into Git or command-line arguments. MAIL_FROM should be a verified sender such as `PATCH <patch@updates.YOUR_DOMAIN>`. Set ADMIN_EMAIL and REPLY_TO to Brian's address supplied in the task. No real address is stored in committed configuration or frontend code.
 
-4. Keep `MAIL_MODE = "disabled"` for the initial deployment. The database also starts with `mail_paused=true`, an independent durable safety switch. Run `npm run build` and `npm run deploy` only after review and when you intend to release the change. This task does not automatically merge or deploy.
+4. Keep `MAIL_MODE = "disabled"` for the initial deployment. The database also starts with `mail_paused=true`, an independent durable safety switch. Run `npm run build` and `npm run deploy` only when you intend to release the change. The production deployment recorded above was explicitly authorized; PR #1 remains draft and must not be merged automatically.
 5. Confirm `/patch-meetings/`, `/patch-meetings/admin/`, and `/api/patch/week` resolve on the same origin. Confirm the cron trigger is installed. The next cron creates the current poll even while mail is disabled/paused. Requests can also create a poll when submitting; historical responses are never recycled.
 
 Use a **different D1 database, Worker name, secrets and origin** for any preview deployment. Never attach a preview to production D1. `wrangler deploy --dry-run` bundles without deploying or sending mail.
@@ -80,7 +91,7 @@ Use a **different D1 database, Worker name, secrets and origin** for any preview
 
 Create a Resend account and add the sending domain/subdomain you control, preferably `updates.brianwinston.com`. In Resend's Domains screen choose its region and copy its exact DNS records into the authoritative DNS provider. These normally include DKIM TXT and SPF TXT/MX records for the sending/return-path subdomain; record names, values and priorities are supplied by Resend. Do not replace an existing root SPF record or mailbox MX records. Use DNS-only records where applicable. Add an appropriate DMARC TXT policy for the sending domain, initially monitoring if needed. Wait until Resend reports the domain verified, then create a sending API key scoped to that domain. No separate mailbox purchase is required to use a verified sender. Replies go to the independent REPLY_TO address.
 
-Current pricing could not be independently fetched from this environment: its network proxy rejected both the pricing page and Resend docs. **Do not assume free-tier terms.** Before enabling, check https://resend.com/pricing and https://resend.com/docs/dashboard/domains/introduction for verified-domain requirements, monthly and daily sending allowances, and free-plan behavior when a limit is reached. This workload is approximately 5 invitations + up to 5 reminders + 1 admin status + 1 completion per week (up to 12/week, about 60/month), plus link recovery and testing. Use a plan whose free allowance covers that, and do not enable automatic paid upgrades. Check Cloudflare Workers/D1 free allowances in your account too; do not purchase anything as part of setup.
+The October 16, 2026 documentation check found a free transactional allowance of 3,000 emails/month and 100/day; see the activation record above. Recheck https://resend.com/pricing and https://resend.com/docs/dashboard/domains/introduction before enabling if continuing later, and confirm account-specific usage and billing settings in the dashboard. This workload is approximately 5 invitations + up to 5 reminders + 1 admin status + 1 completion per week (up to 12/week, about 60/month), plus link recovery and testing. Use a plan whose free allowance covers that, and do not enable automatic paid upgrades. Check Cloudflare Workers/D1 free allowances in your account too; do not purchase anything as part of setup.
 
 ## Secure roster setup and personal links
 
@@ -164,4 +175,4 @@ If Resend accepted it, leave it in review rather than resend. This avoids claimi
 
 ## Verification recorded for this implementation
 
-See the final task report for the latest pass/fail results. The included tests cover rollover/DST, interval validation, personal/admin isolation, missing vs unavailable, edits and history, concurrent completion, invites, targeted reminders and late completion, pause/test mode, rate limits, retries and provider failures. Browser smoke checks cover desktop drag, keyboard selection, save failures retaining selections, successful saves, all-day edits/reopen, phone touch mode, mobile width and admin access. Generated sitemap, RSS and search output should also be checked after building; no PATCH URL should appear. Real provider/DNS verification and production cron execution require account access and remain activation steps.
+See the activation record and final task report for the latest pass/fail results. The included tests cover rollover/DST, interval validation, personal/admin isolation, missing vs unavailable, edits and history, concurrent completion, invites, targeted reminders and late completion, pause/test mode, rate limits, retries and provider failures. Browser smoke checks cover desktop drag, keyboard selection, save failures retaining selections, successful saves, all-day edits/reopen, phone touch mode, mobile width and admin access. Generated sitemap, RSS and search output should also be checked after building; no PATCH URL should appear. Production end-to-end checks, inbox delivery, and successful cron execution remain to be confirmed as described in the activation record.

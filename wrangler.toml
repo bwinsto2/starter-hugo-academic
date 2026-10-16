@@ -12,11 +12,11 @@ binding = "ASSETS"
 run_worker_first = ["/api/patch/*", "/patch-meetings", "/patch-meetings/*"]
 
 
-# Create the database, then replace this placeholder before deploying.
+# Production PATCH scheduler database.
 [[d1_databases]]
 binding = "DB"
 database_name = "patch-meetings"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "d598e825-36ff-4e07-937a-4334ee9dcb3b"
 migrations_dir = "worker/migrations"
 
 [triggers]
