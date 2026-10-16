@@ -43,10 +43,6 @@ h2 {
   font-size: 1.3rem;
   margin: 0 0 12px;
 }
-.intro {
-  font-size: 1.15rem;
-  color: #53685e;
-}
 .week {
   display: flex;
   gap: 20px;
@@ -54,16 +50,18 @@ h2 {
   justify-content: space-between;
   padding: 28px 0;
 }
+.week h1,
 .week h2 {
   font-size: 1.7rem;
 }
+.week h1 {
+  font-family: inherit;
+  font-weight: 700;
+  line-height: inherit;
+  margin: 0 0 12px;
+}
 .week p {
   margin: 6px 0;
-}
-.eyebrow {
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  font-weight: 700;
 }
 a {
   color: #17634e;
