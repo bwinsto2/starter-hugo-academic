@@ -1,9 +1,29 @@
 #!/usr/bin/env node
-// Credential values are read from the environment, never command-line arguments.
+// Credentials come from the environment or ignored private backup, never CLI arguments.
 import { readFile, writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { loadAdminToken, resetAdminToken } from "./patch-credentials.mjs";
 const [command, arg, output] = process.argv.slice(2);
-if (!process.env.PATCH_ADMIN_TOKEN || !process.env.PATCH_ORIGIN)
-  throw new Error("Set PATCH_ORIGIN and PATCH_ADMIN_TOKEN in your shell.");
+const directory = fileURLToPath(new URL("../", import.meta.url));
+if (command === "reset-admin") {
+  const path = await resetAdminToken(directory);
+  console.log(
+    `Admin password replaced and saved privately at ${path}. Personal links and mail settings are preserved.`,
+  );
+  process.exit(0);
+}
+const adminToken = await loadAdminToken(directory);
+const config = await readFile(
+  new URL("../wrangler.toml", import.meta.url),
+  "utf8",
+);
+const origin =
+  process.env.PATCH_ORIGIN ||
+  config.match(/^PUBLIC_ORIGIN\s*=\s*"([^"]+)"/m)?.[1];
+if (!adminToken || !origin)
+  throw new Error(
+    "Set PATCH_ADMIN_TOKEN or restore the private credential backup. If the admin password is lost, use patch:admin -- reset-admin with existing Cloudflare credentials. PATCH_ORIGIN defaults to PUBLIC_ORIGIN in wrangler.toml.",
+  );
 const paths = {
   status: "",
   roster: "/roster",
@@ -16,7 +36,7 @@ const paths = {
 };
 if (!(command in paths))
   throw new Error(
-    "Commands: status [Friday], roster ignored-file.json, link ID output-file, rotate ID output-file, pause, resume, retry DELIVERY_ID, test-mail",
+    "Commands: status [Friday], roster ignored-file.json, link ID output-file, rotate ID output-file, pause, resume, retry DELIVERY_ID, test-mail, reset-admin",
   );
 let body;
 if (command === "roster")
@@ -39,10 +59,10 @@ if (command === "test-mail") body = {};
 const path =
   paths[command] +
   (command === "status" && arg ? "?week=" + encodeURIComponent(arg) : "");
-const r = await fetch(process.env.PATCH_ORIGIN + "/api/patch/admin" + path, {
+const r = await fetch(origin + "/api/patch/admin" + path, {
   method: body ? "POST" : "GET",
   headers: {
-    Authorization: "Bearer " + process.env.PATCH_ADMIN_TOKEN,
+    Authorization: "Bearer " + adminToken,
     ...(body ? { "Content-Type": "application/json" } : {}),
   },
   ...(body ? { body: JSON.stringify(body) } : {}),
