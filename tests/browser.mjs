@@ -91,18 +91,53 @@ try {
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("dialog", (d) => d.accept());
   await page.goto(url);
-  await page.getByText('Your availability, Josh "Handsome" Bloch').waitFor();
+  await page
+    .locator("#greeting")
+    .filter({ hasText: 'Josh "Handsome" Bloch' })
+    .waitFor();
   assert.equal(await page.locator(".slot").count(), 40);
+  assert.equal(await page.locator(".group-slot").count(), 40);
+  async function fitsViewport(target) {
+    const dimensions = await target.evaluate(() => ({
+      height: innerHeight,
+      width: innerWidth,
+      scrollHeight: document.documentElement.scrollHeight,
+      scrollWidth: document.documentElement.scrollWidth,
+      lastSlot: document
+        .querySelector(".slot:last-child")
+        .getBoundingClientRect().bottom,
+      saveBottom: document.querySelector("#save-bar").getBoundingClientRect()
+        .bottom,
+    }));
+    assert(
+      dimensions.scrollHeight <= dimensions.height,
+      JSON.stringify(dimensions),
+    );
+    assert(
+      dimensions.scrollWidth <= dimensions.width,
+      JSON.stringify(dimensions),
+    );
+    assert(
+      dimensions.lastSlot <= dimensions.height &&
+        dimensions.saveBottom <= dimensions.height,
+      JSON.stringify(dimensions),
+    );
+  }
+  await fitsViewport(page);
   assert.equal(new URL(page.url()).hash, "");
   const first = page.locator(".slot").nth(0);
   await first.scrollIntoViewIfNeeded();
   const a = await first.boundingBox(),
     b = await page.locator(".slot").nth(3).boundingBox();
-  await page.mouse.move(a.x + 100, a.y + 15);
+  await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
   await page.mouse.down();
-  await page.mouse.move(b.x + 100, b.y + 15, { steps: 6 });
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 6 });
   await page.mouse.up();
   assert.equal(await page.locator(".slot[aria-pressed=true]").count(), 4);
+  assert.match(
+    await page.locator(".group-slot").first().getAttribute("aria-label"),
+    /0 of 5/,
+  );
   await page.route("**/api/patch/response", (route) =>
     route.fulfill({
       status: 503,
@@ -117,7 +152,31 @@ try {
   await page.getByRole("button", { name: "Submit availability" }).click();
   await page.getByText("Saved. Thank you", { exact: false }).waitFor();
   assert.equal(await page.locator("#count").textContent(), "1 of 5 responded");
-  await page.locator(".slot").nth(5).focus();
+  assert.match(
+    await page.locator(".group-slot").first().getAttribute("aria-label"),
+    /1 of 5/,
+  );
+  await page.locator(".group-slot").first().hover();
+  await page
+    .getByText('8:00 AM–8:15 AM · 1/5 available — Josh "Handsome" Bloch', {
+      exact: true,
+    })
+    .waitFor();
+  for (const size of [
+    { width: 1440, height: 900 },
+    { width: 1366, height: 600 },
+    { width: 1024, height: 768 },
+    { width: 768, height: 700 },
+    { width: 390, height: 844 },
+    { width: 375, height: 667 },
+    { width: 320, height: 568 },
+  ]) {
+    await page.setViewportSize(size);
+    await fitsViewport(page);
+  }
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.screenshot({ path: "work/patch-desktop.png", fullPage: true });
+  await page.locator(".slot").nth(39).focus();
   await page.keyboard.press("Space");
   assert.equal(await page.locator(".slot[aria-pressed=true]").count(), 5);
   await page.locator("#unavailable").check();
@@ -126,7 +185,6 @@ try {
   assert.equal(await page.locator(".slot[aria-pressed=true]").count(), 0);
   await page.goto(url);
   await page.locator("#unavailable:checked").waitFor();
-  await page.screenshot({ path: "work/patch-desktop.png", fullPage: true });
   const mobile = await browser.newPage({
     viewport: { width: 390, height: 844 },
     isMobile: true,
@@ -135,6 +193,11 @@ try {
   mobile.on("dialog", (d) => d.accept());
   await mobile.goto(url);
   await mobile.locator("#editor").waitFor();
+  await fitsViewport(mobile);
+  await mobile.locator("#team-panel summary").click();
+  await mobile.locator("#people").waitFor();
+  await fitsViewport(mobile);
+  await mobile.locator("#team-panel summary").click();
   assert(
     await mobile.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -150,8 +213,36 @@ try {
     "http://localhost:8789/patch-meetings/?week=2026-01-02#token=" + token,
   );
   await page.getByText("Historical week", { exact: false }).waitFor();
+  assert.equal(await page.locator(".slot:enabled").count(), 0);
+  await fitsViewport(page);
   await page.locator("#current").click();
-  await page.getByText('Your availability, Josh "Handsome" Bloch').waitFor();
+  await page
+    .locator("#greeting")
+    .filter({ hasText: 'Josh "Handsome" Bloch' })
+    .waitFor();
+  const publicPage = await browser.newPage();
+  await publicPage.goto("http://localhost:8789/patch-meetings/");
+  await publicPage.locator("#link-request").waitFor();
+  for (const size of [
+    { width: 1280, height: 900 },
+    { width: 1366, height: 600 },
+    { width: 768, height: 700 },
+    { width: 390, height: 844 },
+    { width: 375, height: 667 },
+    { width: 320, height: 568 },
+  ]) {
+    await publicPage.setViewportSize(size);
+    await fitsViewport(publicPage);
+  }
+  assert.equal(await publicPage.locator(".slot:enabled").count(), 0);
+  assert.equal(await publicPage.locator("#save-bar").isVisible(), false);
+  await publicPage.locator("#email").fill("p1@example.invalid");
+  await publicPage.getByRole("button", { name: "Send link" }).click();
+  await publicPage
+    .locator("#request-status")
+    .filter({ hasText: "If this address" })
+    .waitFor();
+  await fitsViewport(publicPage);
   await page.goto("http://localhost:8789/patch-meetings/admin/");
   await page.locator("#credential").fill(token);
   await page.getByRole("button", { name: "View status" }).click();
@@ -162,7 +253,7 @@ try {
   assert.equal(await page.locator("#heatmap li").count(), 40);
   assert.deepEqual(errors, []);
   console.log(
-    "PASS: desktop drag, keyboard, failed save retention, save/edit/reload, all-day response, mobile touch and layout, protected admin. No real emails sent.",
+    "PASS: one-screen layout at 8 desktop/phone sizes, separate personal/group grids, hover details, drag/keyboard, failed save retention, save/edit/reload, unavailable, touch, historical and admin. No real emails sent.",
   );
 } finally {
   await browser.close();

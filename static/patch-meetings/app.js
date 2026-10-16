@@ -16,7 +16,14 @@ let state = null,
   drag = null,
   lastSlot = null,
   ready = false;
-const slotButtons = [];
+const slotButtons = [],
+  groupButtons = [];
+const compactLayout = matchMedia("(max-width: 700px)");
+function layoutTeam() {
+  $("team-panel").open = !compactLayout.matches;
+}
+layoutTeam();
+compactLayout.addEventListener("change", layoutTeam);
 const times = Array.from({ length: 41 }, (_, i) => {
   const m = 480 + i * 15;
   return `${Math.floor(m / 60) % 12 || 12}:${String(m % 60).padStart(2, "0")} ${m < 720 ? "AM" : "PM"}`;
@@ -46,22 +53,25 @@ function detail(i) {
   lastSlot = i;
   const s = state.slots[i];
   $("details").textContent =
-    `${label(i)} Eastern: ${s.count} of ${state.expected} available${s.names.length ? " — " + s.names.join(", ") : "."}`;
+    `${label(i)} · ${s.count}/${state.expected} available${s.names.length ? " — " + s.names.join(", ") : "."}`;
 }
 function paint() {
   slotButtons.forEach((b, i) => {
     const s = state.slots[i],
       fraction = s.count / Math.max(state.expected, 1),
       on = selected.has(i);
-    b.style.setProperty("--heat", `hsl(151 38% ${96 - fraction * 66}%)`);
-    b.style.setProperty("--ink", fraction > 0.6 ? "#fff" : "#173b33");
+    const group = groupButtons[i];
+    group.style.setProperty("--heat", `hsl(151 38% ${96 - fraction * 66}%)`);
+    group.setAttribute(
+      "aria-label",
+      `${label(i)} Eastern, ${s.count} of ${state.expected} available. ${s.names.join(", ")}`,
+    );
+    b.disabled = !canEdit();
     b.setAttribute("aria-pressed", String(on));
     b.setAttribute(
       "aria-label",
-      `${label(i)} Eastern, ${s.count} of ${state.expected} available${on ? ", selected by you" : ""}. ${s.names.join(", ")}`,
+      `${label(i)} Eastern${on ? ", selected by you" : ", not selected"}`,
     );
-    b.querySelector(".check").textContent = on ? "✓" : "";
-    b.querySelector(".number").textContent = `${s.count}/${state.expected}`;
   });
   $("unavailable").checked = unavailable;
   $("save").disabled = !canEdit() || (!selected.size && !unavailable);
@@ -94,17 +104,15 @@ function render(data, initialLoad = false) {
   }).format(new Date(data.friday + "T16:00:00Z"));
   $("current").hidden = !data.readOnly;
   $("count").textContent = `${data.submitted} of ${data.expected} responded`;
+  $("legend-total").textContent = data.expected;
   $("link-request").hidden = !!data.me;
   $("editor").hidden = !data.me || data.readOnly;
   $("save-bar").hidden = !data.me || data.readOnly;
-  $("greeting").textContent = data.me
-    ? `Your availability, ${data.me.name}`
-    : "";
+  $("greeting").textContent = data.me ? data.me.name : "";
   $("notice").textContent = data.readOnly
-    ? "Historical week · Read-only. Open the current week to submit fresh availability."
-    : data.me
-      ? "Choose your times below, then submit. Your response stays editable until Sunday’s rollover."
-      : "View the team’s saved availability, or open your personal link to respond.";
+    ? "Historical week · Read-only. Open the current week to respond."
+    : "";
+  $("notice").hidden = !data.readOnly;
   const list = $("people");
   list.replaceChildren();
   for (const p of data.people) {
@@ -128,6 +136,13 @@ function render(data, initialLoad = false) {
           minute: "2-digit",
           timeZoneName: "short",
         }).format(new Date(p.updatedAt));
+    if (p.submitted) li.classList.add("responded");
+    li.title = `${p.name}: ${status.textContent}`;
+    status.textContent = p.submitted
+      ? p.unavailable
+        ? "Unavailable"
+        : "Saved"
+      : "Waiting";
     li.append(name, status);
     list.append(li);
   }
@@ -138,13 +153,19 @@ for (let i = 0; i < 40; i++) {
   b.type = "button";
   b.className = "slot" + (i % 4 === 0 ? " hour" : "");
   b.dataset.slot = i;
-  const time = document.createElement("span"),
-    check = document.createElement("span"),
-    count = document.createElement("span");
-  time.textContent = label(i);
-  check.className = "check";
-  count.className = "number";
-  b.append(time, check, count);
+  b.addEventListener("pointerenter", () => state && detail(i));
+  b.addEventListener("keydown", (e) => {
+    const next =
+      e.key === "ArrowDown"
+        ? Math.min(39, i + 1)
+        : e.key === "ArrowUp"
+          ? Math.max(0, i - 1)
+          : null;
+    if (next !== null) {
+      e.preventDefault();
+      slotButtons[next].focus();
+    }
+  });
   b.addEventListener("focus", () => state && detail(i));
   b.addEventListener("click", (e) => {
     if (e.detail === 0) {
@@ -166,6 +187,32 @@ for (let i = 0; i < 40; i++) {
   });
   slotButtons.push(b);
   $("slots").append(b);
+  const group = document.createElement("button");
+  group.type = "button";
+  group.className = "group-slot" + (i % 4 === 0 ? " hour" : "");
+  for (const event of ["focus", "pointerenter", "click"])
+    group.addEventListener(event, () => state && detail(i));
+  group.addEventListener("keydown", (e) => {
+    const next =
+      e.key === "ArrowDown"
+        ? Math.min(39, i + 1)
+        : e.key === "ArrowUp"
+          ? Math.max(0, i - 1)
+          : null;
+    if (next !== null) {
+      e.preventDefault();
+      groupButtons[next].focus();
+    }
+  });
+  groupButtons.push(group);
+  $("group-slots").append(group);
+}
+for (let hour = 0; hour <= 10; hour++) {
+  const tick = document.createElement("span");
+  tick.className = "time-label";
+  tick.style.setProperty("--hour", hour);
+  tick.textContent = times[hour * 4].replace(":00", "");
+  $("time-axis").append(tick);
 }
 $("slots").addEventListener("pointermove", (e) => {
   if (!drag) return;
@@ -215,14 +262,14 @@ $("save").addEventListener("click", async () => {
     });
     dirty = false;
     render(data);
-    $("save-status").textContent =
-      "Saved. Thank you — you can update this response later.";
+    $("save-status").textContent = "Saved. Thank you.";
   } catch (e) {
     $("save-status").textContent = e.message;
     $("save-status").classList.add("error");
     if (e.status === 409) {
       state.readOnly = true;
       $("notice").textContent = e.message;
+      $("notice").hidden = false;
       $("current").hidden = false;
     }
   } finally {
@@ -257,6 +304,7 @@ async function refresh(first = false) {
     render(data, first);
   } catch (e) {
     $("notice").textContent = e.message;
+    $("notice").hidden = false;
     if (first) {
       $("date").textContent = "Schedule unavailable";
       $("link-request").hidden = false;
