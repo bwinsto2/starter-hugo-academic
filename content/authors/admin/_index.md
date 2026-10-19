@@ -1,6 +1,6 @@
 ---
 title: Brian Winston
-role: PhD Student in Psychological and Brain Sciences
+role: 5th year PhD candidate in Psychological and Brain Sciences
 avatar_filename: avatar.jpg
 bio: Psychedelic researcher, compassionate human, and aspiring futurist.
 interests:
@@ -36,7 +36,6 @@ education:
       year: 2022-present
     - course: B.A. in Philosophy, Neuroscience, and Psychology
       institution: Washington University in St. Louis
-      year: 2019
 superuser: true
 status:
   icon: ☕️
@@ -46,5 +45,5 @@ first_name: Brian
 email: brian.winston@jhu.edu
 ---
 
-Hey. I'm Brian. Welcome to my website. I am a PhD student in the Johns Hopkins [Center for Psychedelic and Consciousness Research](https://hopkinspsychedelic.org/) and [Department of Psychological and Brain Sciences](https://pbs.jhu.edu/) trying to figure out how psychedelics change the mind and brain. I'll let you know when I do that. In the meantime, you can check out my publications, posters, talks, sci-comm articles, and more. Don't hesitate to get in touch!
+Hey. I'm Brian. Welcome to my website. I am a 5th year PhD candidate in the Johns Hopkins [Center for Psychedelic and Consciousness Research](https://hopkinspsychedelic.org/) and [Department of Psychological and Brain Sciences](https://pbs.jhu.edu/) trying to figure out how psychedelics change the mind and brain. I'll let you know when I do that. In the meantime, you can check out my publications, posters, talks, sci-comm articles, and more. Don't hesitate to get in touch!
 

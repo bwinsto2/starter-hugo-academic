@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>PATCH · Friday availability</title>
+    <link rel="stylesheet" href="/patch-meetings/availability.css" />
+    <script src="/patch-meetings/app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <span class="brand"
+          ><img
+            src="/images/PATCH_logo.png"
+            alt=""
+            width="28"
+            height="28"
+          />PATCH study team</span
+        >
+        <a href="/">Brian Winston</a>
+      </header>
+      <section class="week" aria-label="Current poll">
+        <div>
+          <h1 id="date">Loading Friday…</h1>
+          <p>8 AM–6 PM <span>Eastern time</span></p>
+        </div>
+        <a id="current" href="/patch-meetings/" hidden>Current week →</a>
+      </section>
+      <p id="notice" role="status" aria-live="polite" hidden></p>
+      <div class="workspace">
+        <aside class="sidebar">
+          <section id="link-request" hidden>
+            <h2>Your personal link</h2>
+            <p>Open your invitation, or send a link to your team email.</p>
+            <form id="request">
+              <label class="sr-only" for="email">Team email address</label>
+              <div class="email-form">
+                <input
+                  id="email"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="Team email"
+                  required
+                  maxlength="254"
+                />
+                <button>Send link</button>
+              </div>
+              <p id="request-status" role="status"></p>
+            </form>
+          </section>
+          <section id="editor" hidden>
+            <h2 id="greeting"></h2>
+            <p class="selection-help">
+              Drag to select or clear. Tab + Space also works.
+            </p>
+            <div class="options">
+              <label
+                ><input id="unavailable" type="checkbox" /> Unavailable all
+                day</label
+              >
+              <button id="clear" class="text-button" type="button">
+                Clear
+              </button>
+            </div>
+            <label class="touch-option"
+              ><input id="touch" type="checkbox" /> Touch selection</label
+            >
+          </section>
+          <details id="team-panel" open>
+            <summary>Team <span id="count"></span></summary>
+            <ul id="people"></ul>
+          </details>
+        </aside>
+        <section class="calendar" aria-label="Friday availability">
+          <div class="calendar-head">
+            <span></span>
+            <h2 id="personal-heading">Your availability</h2>
+            <h2>Team availability</h2>
+          </div>
+          <div class="calendar-grid">
+            <div id="time-axis" aria-hidden="true"></div>
+            <div
+              id="slots"
+              class="slots"
+              role="group"
+              aria-labelledby="personal-heading"
+            ></div>
+            <div
+              id="group-slots"
+              class="slots"
+              role="group"
+              aria-label="Saved team availability"
+            ></div>
+          </div>
+          <div class="calendar-key">
+            <span>15-minute blocks</span>
+            <span class="heat-key"
+              >0 <span class="gradient"></span>
+              <span id="legend-total">5</span> available</span
+            >
+          </div>
+          <p id="details" role="status" aria-live="polite">
+            Hover or tap a time to see who's available.
+          </p>
+          <div id="save-bar" hidden>
+            <button id="save" type="button">Submit availability</button>
+            <span id="save-status" role="status" aria-live="polite"></span>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

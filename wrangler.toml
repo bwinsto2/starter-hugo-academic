@@ -1,5 +1,6 @@
 name = "brianwinstonwebsite"
 compatibility_date = "2026-06-03"
+main = "worker/index.mjs"
 
 [build]
 command = "./scripts/build-hugo.sh"
@@ -7,3 +8,28 @@ watch_dir = ["content", "layouts", "assets", "static", "config"]
 
 [assets]
 directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/patch/*", "/patch-meetings", "/patch-meetings/*"]
+
+
+# Production PATCH scheduler database.
+[[d1_databases]]
+binding = "DB"
+database_name = "patch-meetings"
+database_id = "d598e825-36ff-4e07-937a-4334ee9dcb3b"
+migrations_dir = "worker/migrations"
+
+[triggers]
+crons = ["*/15 * * * *"]
+
+[vars]
+PUBLIC_ORIGIN = "https://brianwinston.com"
+MAIL_MODE = "live"
+# First invitations: Monday October 19, 2026 at 9 AM Eastern, for Friday October 23.
+MAIL_START_AT = "2026-10-19T13:00:00Z"
+# Set MAIL_FROM, ADMIN_EMAIL, and REPLY_TO via secrets or .dev.vars.
+# LINK_SECRET, ADMIN_TOKEN and RESEND_API_KEY must be secrets.
+
+# Refuse a deploy if a version would lose the existing production secrets.
+[secrets]
+required = ["LINK_SECRET", "ADMIN_TOKEN", "RESEND_API_KEY", "MAIL_FROM", "ADMIN_EMAIL", "REPLY_TO"]

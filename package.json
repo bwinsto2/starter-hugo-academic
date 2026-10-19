@@ -3,9 +3,13 @@
   "private": true,
   "scripts": {
     "build": "./scripts/build-hugo.sh",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "test": "node --test tests/*.test.mjs",
+    "patch:dev": "npm run build && wrangler dev",
+    "patch:admin": "node scripts/patch-admin.mjs"
   },
   "devDependencies": {
-    "wrangler": "^4.97.0"
+    "wrangler": "^4.97.0",
+    "miniflare": "4.20251210.0"
   }
 }
