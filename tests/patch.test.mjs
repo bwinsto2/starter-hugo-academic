@@ -586,6 +586,143 @@ test("manual scheduler recovery requires admin and honors mode, pause, start tim
   await run();
   assert.equal(mail.length, 5);
 });
+test("manual reminders require admin, current week and live unpaused mail", async (t) => {
+  t.mock.timers.enable({
+    apis: ["Date"],
+    now: new Date("2026-10-19T15:00:00Z"),
+  });
+  const payload = {
+    friday: currentFriday(),
+    requestId: "00000000-0000-4000-8000-000000000001",
+  };
+  const remind = (token = env.ADMIN_TOKEN, body = payload) =>
+    request("/api/patch/admin/remind", { token, body });
+  assert.equal((await remind("")).status, 401);
+  assert.equal((await remind(await personalToken(env, people[0]))).status, 401);
+  assert.equal((await remind()).status, 409); // disabled
+  env.MAIL_MODE = "test";
+  await unpause();
+  assert.equal((await remind()).status, 409);
+  env.MAIL_MODE = "live";
+  await env.DB.prepare(
+    "UPDATE settings SET value='true' WHERE key='mail_paused'",
+  ).run();
+  assert.equal((await remind()).status, 409);
+  await unpause();
+  env.MAIL_START_AT = "2026-10-20T13:00:00Z";
+  assert.equal((await remind()).status, 409);
+  delete env.MAIL_START_AT;
+  assert.equal(
+    (await remind(env.ADMIN_TOKEN, { ...payload, friday: "2026-10-16" }))
+      .status,
+    409,
+  );
+  assert.equal(
+    (await remind(env.ADMIN_TOKEN, { ...payload, requestId: "bad" })).status,
+    400,
+  );
+  assert.equal(
+    (await env.DB.prepare("SELECT count(*) AS n FROM jobs").first()).n,
+    0,
+  );
+  assert.equal(mail.length, 0);
+});
+test("manual reminders name respondents, target only missing, and deduplicate concurrent/repeated requests", async () => {
+  await save(0);
+  await save(1, [], true);
+  env.MAIL_MODE = "live";
+  await unpause();
+  const body = {
+    friday: currentFriday(),
+    requestId: "00000000-0000-4000-8000-000000000002",
+  };
+  const remind = () =>
+    request("/api/patch/admin/remind", { token: env.ADMIN_TOKEN, body });
+  const results = await Promise.all([remind(), remind()]);
+  assert(
+    results.every((r) => r.status === 200 && r.data.recipients.length === 3),
+  );
+  assert.deepEqual(
+    mail.map((m) => m.to[0]).sort(),
+    people.slice(2).map((p) => p.email),
+  );
+  for (const msg of mail) {
+    const recipient = people.find((p) => p.email === msg.to[0]);
+    assert(msg.text.startsWith(`Hi ${recipient.name},`));
+    assert(
+      msg.text.includes(
+        'Josh "Handsome" Bloch and Person 0 have submitted availability',
+      ),
+    );
+    assert(msg.html.includes("Josh &quot;Handsome&quot; Bloch"));
+    assert(msg.text.includes("Please share yours here:"));
+    assert(
+      msg.text.includes("#token=" + (await personalToken(env, recipient))),
+    );
+    assert(msg.text.includes("week=" + currentFriday()));
+    assert(!msg.text.includes(people[1].email));
+  }
+  await remind();
+  assert.equal(mail.length, 3);
+  // Manual sending must not consume either scheduled reminder batch.
+  await schedule(env, weekTime(3, "10"));
+  assert.equal(
+    mail.filter((m) => m.key.includes(":remind-tuesday:")).length,
+    3,
+  );
+  assert(
+    mail
+      .filter((m) => m.key.includes(":remind-tuesday:"))
+      .every((m) => m.text.includes("have submitted availability")),
+  );
+});
+test("manual reminders recheck respondents on retries, handle nobody/everybody and retain delivery receipts", async () => {
+  env.MAIL_MODE = "live";
+  await unpause();
+  const body = {
+    friday: currentFriday(),
+    requestId: "00000000-0000-4000-8000-000000000003",
+  };
+  fail = true;
+  await request("/api/patch/admin/remind", { token: env.ADMIN_TOKEN, body });
+  assert.equal(mail.length, 5);
+  assert(
+    mail.every((m) => m.text.includes("No one has submitted availability")),
+  );
+  await save(0, [], true);
+  mail = [];
+  fail = false;
+  await env.DB.prepare("UPDATE deliveries SET next_at='2000-01-01'").run();
+  await drain(env);
+  assert.equal(mail.length, 4);
+  assert(!mail.some((m) => m.to[0] === people[0].email));
+  assert(
+    mail.every((m) => m.text.includes("Person 0 has submitted availability")),
+  );
+  const receipts = (
+    await env.DB.prepare(
+      "SELECT id,provider_id FROM deliveries WHERE state='sent' ORDER BY id",
+    ).all()
+  ).results;
+  await request("/api/patch/admin/remind", { token: env.ADMIN_TOKEN, body });
+  assert.equal(mail.length, 4);
+  assert.deepEqual(
+    (
+      await env.DB.prepare(
+        "SELECT id,provider_id FROM deliveries WHERE state='sent' ORDER BY id",
+      ).all()
+    ).results,
+    receipts,
+  );
+  for (let i = 1; i < 5; i++) await save(i);
+  mail = [];
+  const allDone = await request("/api/patch/admin/remind", {
+    token: env.ADMIN_TOKEN,
+    body: { ...body, requestId: "00000000-0000-4000-8000-000000000004" },
+  });
+  assert.deepEqual(allDone.data.recipients, []);
+  assert.equal(mail.length, 0);
+});
 test("everyone responded Wednesday skips reminders/status", async () => {
   for (let i = 0; i < 5; i++) await save(i);
   env.MAIL_MODE = "live";
