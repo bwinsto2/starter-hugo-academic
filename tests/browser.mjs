@@ -1,7 +1,7 @@
 // Optional browser smoke test. Requires Playwright and Chromium on the host.
 import { createRequire } from "node:module";
 import { createServer } from "node:http";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import { resolve, extname } from "node:path";
 import assert from "node:assert/strict";
 import { Miniflare } from "miniflare";
@@ -13,11 +13,13 @@ const mf = new Miniflare({
   d1Databases: ["DB"],
 });
 const DB = await mf.getD1Database("DB");
-for (const sql of (await readFile("worker/migrations/0001_patch.sql", "utf8"))
-  .split(";")
-  .map((s) => s.trim())
-  .filter(Boolean))
-  await DB.prepare(sql).run();
+for (const file of (await readdir("worker/migrations")).sort()) {
+  for (const sql of (await readFile(`worker/migrations/${file}`, "utf8"))
+    .split(";")
+    .map((s) => s.trim())
+    .filter(Boolean))
+    await DB.prepare(sql).run();
+}
 const env = {
   DB,
   MAIL_MODE: "disabled",
@@ -138,6 +140,8 @@ try {
     await page.locator(".group-slot").first().getAttribute("aria-label"),
     /0 of 5/,
   );
+  const comment = 'Faculty retreat <img src=x onerror="alert(1)">';
+  await page.locator("#comment").fill(comment);
   await page.route("**/api/patch/response", (route) =>
     route.fulfill({
       status: 503,
@@ -148,10 +152,26 @@ try {
   await page.getByRole("button", { name: "Submit availability" }).click();
   await page.getByText("Fixture save failure").waitFor();
   assert.equal(await page.locator(".slot[aria-pressed=true]").count(), 4);
+  assert.equal(await page.locator("#comment").inputValue(), comment);
+  assert.equal(await page.locator("#people .saved-comment").count(), 0);
   await page.unroute("**/api/patch/response");
   await page.getByRole("button", { name: "Submit availability" }).click();
   await page.getByText("Saved. Thank you", { exact: false }).waitFor();
   assert.equal(await page.locator("#count").textContent(), "1 of 5 responded");
+  assert.equal(
+    await page.locator("#people .saved-comment").textContent(),
+    comment,
+  );
+  assert.equal(await page.locator("#people img").count(), 0);
+  // An automatic refresh must not overwrite an unsaved comment.
+  await page.locator("#comment").fill("Unsaved note");
+  await page.evaluate(() => refresh());
+  assert.equal(await page.locator("#comment").inputValue(), "Unsaved note");
+  assert.equal(
+    await page.locator("#people .saved-comment").textContent(),
+    comment,
+  );
+  await page.locator("#comment").fill(comment);
   assert.match(
     await page.locator(".group-slot").first().getAttribute("aria-label"),
     /1 of 5/,
@@ -180,11 +200,16 @@ try {
   await page.keyboard.press("Space");
   assert.equal(await page.locator(".slot[aria-pressed=true]").count(), 5);
   await page.locator("#unavailable").check();
+  await page.locator("#comment").fill("Faculty retreat — all day");
   await page.getByRole("button", { name: "Submit availability" }).click();
   await page.getByText("Saved. Thank you", { exact: false }).waitFor();
   assert.equal(await page.locator(".slot[aria-pressed=true]").count(), 0);
   await page.goto(url);
   await page.locator("#unavailable:checked").waitFor();
+  assert.equal(
+    await page.locator("#comment").inputValue(),
+    "Faculty retreat — all day",
+  );
   const mobile = await browser.newPage({
     viewport: { width: 390, height: 844 },
     isMobile: true,
@@ -223,6 +248,17 @@ try {
   const publicPage = await browser.newPage();
   await publicPage.goto("http://localhost:8789/patch-meetings/");
   await publicPage.locator("#link-request").waitFor();
+  assert.equal(
+    await publicPage.locator("#people .saved-comment").textContent(),
+    "Faculty retreat — all day",
+  );
+  // A long saved comment remains readable within the team panel without growing the page.
+  await page.goto(url);
+  await page.locator("#editor").waitFor();
+  await page.locator("#comment").fill("Faculty retreat ".repeat(30));
+  await page.locator("#save").click();
+  await page.getByText("Saved. Thank you", { exact: false }).waitFor();
+  await publicPage.evaluate(() => refresh());
   for (const size of [
     { width: 1280, height: 900 },
     { width: 1366, height: 600 },
