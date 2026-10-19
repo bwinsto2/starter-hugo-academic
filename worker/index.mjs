@@ -500,6 +500,10 @@ async function api(req, env, ctx, url) {
       return json(await snapshot(env, weekParam(url), null, true));
     if (method !== "POST") throw new HttpError(405, "Method not allowed.");
     const b = await body(req);
+    if (path === "/api/patch/admin/run") {
+      await schedule(env);
+      return json({ ok: true });
+    }
     if (path === "/api/patch/admin/roster") {
       if (!Array.isArray(b.people) || b.people.length !== 5)
         throw new HttpError(400, "Supply the five roster members.");

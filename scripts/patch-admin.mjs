@@ -33,10 +33,11 @@ const paths = {
   resume: "/pause",
   retry: "/retry",
   "test-mail": "/test-mail",
+  run: "/run",
 };
 if (!(command in paths))
   throw new Error(
-    "Commands: status [Friday], roster ignored-file.json, link ID output-file, rotate ID output-file, pause, resume, retry DELIVERY_ID, test-mail, reset-admin",
+    "Commands: status [Friday], roster ignored-file.json, link ID output-file, rotate ID output-file, pause, resume, retry DELIVERY_ID, test-mail, run, reset-admin",
   );
 let body;
 if (command === "roster")
@@ -56,6 +57,7 @@ if (command === "retry")
     confirmNotDelivered: process.env.PATCH_CONFIRM_NOT_DELIVERED === "yes",
   };
 if (command === "test-mail") body = {};
+if (command === "run") body = {};
 const path =
   paths[command] +
   (command === "status" && arg ? "?week=" + encodeURIComponent(arg) : "");

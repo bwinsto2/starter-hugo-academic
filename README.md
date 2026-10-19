@@ -1,3 +1,13 @@
+# Production deployment
+
+This repository deploys **both** brianwinston.com and its live PATCH scheduling
+Worker. Read [the production notes](AGENTS.md) and
+[PATCH operations](docs/patch-meetings.md) before publishing even a small website
+edit. An assets-only deployment overwrites the scheduler and removes its bindings.
+Until PR #1 is merged, use the complete `feature/patch-meetings` source; the old
+`main` checkout does not include the live scheduler. Preserve the required-secret
+checks in `wrangler.toml` and verify the API, bindings and cron after publishing.
+
 # [Hugo Academic Theme](https://github.com/wowchemy/starter-hugo-academic)
 
 [![Screenshot](./preview.png)](https://wowchemy.com/hugo-themes/)
@@ -51,4 +61,4 @@ We're an open source movement that depends on your support to stay online and th
 
 ## PATCH Friday availability
 
-The unlisted `/patch-meetings/` scheduler uses the existing Hugo site, a Cloudflare Worker and D1. It includes personal links, a protected admin view and scheduled transactional mail. Mail is disabled by default. See [the setup and operations guide](docs/patch-meetings.md) for migrations, secure roster initialization, testing, activation and maintenance.
+The unlisted `/patch-meetings/` scheduler uses the existing Hugo site, a Cloudflare Worker and D1. It includes personal links, a protected admin view and live scheduled transactional mail. See [the setup and operations guide](docs/patch-meetings.md) for current production state, migrations, secure roster initialization, testing, activation and maintenance.

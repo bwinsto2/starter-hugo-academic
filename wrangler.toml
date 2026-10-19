@@ -29,3 +29,7 @@ MAIL_MODE = "live"
 MAIL_START_AT = "2026-10-19T13:00:00Z"
 # Set MAIL_FROM, ADMIN_EMAIL, and REPLY_TO via secrets or .dev.vars.
 # LINK_SECRET, ADMIN_TOKEN and RESEND_API_KEY must be secrets.
+
+# Refuse a deploy if a version would lose the existing production secrets.
+[secrets]
+required = ["LINK_SECRET", "ADMIN_TOKEN", "RESEND_API_KEY", "MAIL_FROM", "ADMIN_EMAIL", "REPLY_TO"]

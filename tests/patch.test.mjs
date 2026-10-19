@@ -423,6 +423,42 @@ test("weekly mail stays at 9 AM Eastern after the scheduled launch and DST chang
   assert.equal(mail.length, 5);
   assert(mail.every((m) => m.text.includes("week=2026-11-06")));
 });
+test("manual scheduler recovery requires admin and honors mode, pause, start time and idempotency", async (t) => {
+  t.mock.timers.enable({
+    apis: ["Date"],
+    now: new Date("2026-10-19T15:00:00Z"),
+  });
+  assert.equal(
+    (await request("/api/patch/admin/run", { body: {} })).status,
+    401,
+  );
+  assert.equal(
+    (
+      await request("/api/patch/admin/run", {
+        token: await personalToken(env, people[0]),
+        body: {},
+      })
+    ).status,
+    401,
+  );
+  const run = () =>
+    request("/api/patch/admin/run", { token: env.ADMIN_TOKEN, body: {} });
+  assert.equal((await run()).status, 200);
+  assert.equal(mail.length, 0);
+  env.MAIL_MODE = "live";
+  await run();
+  assert.equal(mail.length, 0);
+  await unpause();
+  env.MAIL_START_AT = "2026-10-20T13:00:00Z";
+  await run();
+  assert.equal(mail.length, 0);
+  env.MAIL_START_AT = "2026-10-19T13:00:00Z";
+  await run();
+  assert.equal(mail.length, 5);
+  assert(mail.every((m) => m.text.includes("week=2026-10-23")));
+  await run();
+  assert.equal(mail.length, 5);
+});
 test("everyone responded Wednesday skips reminders/status", async () => {
   for (let i = 0; i < 5; i++) await save(i);
   env.MAIL_MODE = "live";
