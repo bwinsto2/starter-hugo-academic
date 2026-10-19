@@ -1,6 +1,6 @@
 import { test, before, after, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { Miniflare } from "miniflare";
 import worker, {
   personalToken,
@@ -34,16 +34,20 @@ before(async () => {
     d1Databases: ["DB"],
   });
   const DB = await mf.getD1Database("DB");
-  for (const sql of (
-    await readFile(
-      new URL("../worker/migrations/0001_patch.sql", import.meta.url),
-      "utf8",
+  for (const file of (
+    await readdir(new URL("../worker/migrations/", import.meta.url))
+  ).sort()) {
+    for (const sql of (
+      await readFile(
+        new URL(`../worker/migrations/${file}`, import.meta.url),
+        "utf8",
+      )
     )
-  )
-    .split(";")
-    .map((s) => s.trim())
-    .filter(Boolean))
-    await DB.prepare(sql).run();
+      .split(";")
+      .map((s) => s.trim())
+      .filter(Boolean))
+      await DB.prepare(sql).run();
+  }
   env = {
     DB,
     LINK_SECRET: "test-link-secret-".repeat(4),
@@ -162,6 +166,14 @@ test("Friday boundaries include Saturday and pre-6AM Sunday, with DST", () => {
   assert.equal(dueJobs(new Date("2026-03-11T14:00:00Z")).reminders, true);
   assert.equal(dueJobs(new Date("2026-11-04T14:59:00Z")).reminders, false);
   assert.equal(dueJobs(new Date("2026-11-04T15:00:00Z")).reminders, true);
+  for (const [time, due] of [
+    ["2026-03-10T13:59:59Z", false],
+    ["2026-03-10T14:00:00Z", true],
+    ["2026-11-03T14:59:59Z", false],
+    ["2026-11-03T15:00:00Z", true],
+    ["2026-11-04T15:00:00Z", false],
+  ])
+    assert.equal(dueJobs(new Date(time)).tuesdayReminders, due, time);
   assert(validFriday("2026-10-16"));
   assert(!validFriday("2026-10-17"));
   assert(!validFriday("2026-02-30"));
@@ -186,6 +198,7 @@ test("40 intervals, explicit empty response, invalid inputs", () => {
   assert.deepEqual(validateResponse({ slots: [], unavailable: true }), {
     slots: [],
     unavailable: true,
+    comment: "",
   });
   assert.equal(heatmap([], []).length, 40);
 });
@@ -236,6 +249,47 @@ test("participant auth, isolation, edits, missing vs unavailable, safe public re
     (await request("/api/patch/admin", { token: env.ADMIN_TOKEN })).status,
     200,
   );
+});
+test("optional comments are saved, shared, editable and validated without changing response rules", async () => {
+  const token = await personalToken(env, people[0]);
+  const submit = (
+    comment,
+    slots = [3],
+    unavailable = false,
+    friday = currentFriday(),
+  ) =>
+    request("/api/patch/response", {
+      token,
+      body: { friday, slots, unavailable, comment },
+    });
+  assert.equal((await submit("  Faculty retreat  ")).status, 200);
+  let shared = (await request("/api/patch/week")).data;
+  assert.equal(shared.people[0].comment, "Faculty retreat");
+  assert.equal(shared.slots[3].count, 1);
+  const mine = (await request("/api/patch/week", { token })).data;
+  assert.equal(mine.me.response.comment, "Faculty retreat");
+  assert.equal((await submit("Out all day", [], true)).status, 200);
+  shared = (await request("/api/patch/admin", { token: env.ADMIN_TOKEN })).data;
+  assert.equal(shared.people[0].comment, "Out all day");
+  assert.equal(shared.people[0].unavailable, true);
+  assert.equal(shared.submitted, 1);
+  for (const bad of [null, 4, {}, "x".repeat(501)]) {
+    assert.equal((await submit(bad)).status, 400);
+  }
+  assert.equal((await submit("No valid availability", [], false)).status, 400);
+  assert.equal((await submit("x".repeat(500))).status, 200);
+  assert.equal((await submit("")).data.me.response.comment, "");
+  assert.equal(
+    (await submit("Won't overwrite history", [0], false, "2026-01-02")).status,
+    409,
+  );
+  // Existing response writers remain compatible during the additive migration.
+  await env.DB.prepare("INSERT INTO responses VALUES (?,?,?,?,?)")
+    .bind(currentFriday(), "p1", "[]", 1, new Date().toISOString())
+    .run();
+  shared = (await request("/api/patch/week")).data;
+  assert.equal(shared.people[1].comment, "");
+  assert.equal(shared.people[1].submitted, true);
 });
 test("old links and stale submissions cannot overwrite history or new week", async () => {
   await save(0);
@@ -318,6 +372,79 @@ test("Monday invitations individually sent once and Wednesday reminders target o
   assert.equal(
     mail.filter((m) => m.subject.includes("everyone responded")).length,
     1,
+  );
+});
+test("Tuesday and Wednesday reminders use separate receipts and only contact missing respondents", async (t) => {
+  t.mock.timers.enable({
+    apis: ["Date"],
+    now: new Date("2026-10-19T13:00:00Z"),
+  });
+  env.MAIL_MODE = "live";
+  await unpause();
+  await schedule(env);
+  assert.equal(mail.length, 5);
+  await save(0);
+  await save(1, [], true);
+  mail = [];
+  t.mock.timers.setTime(new Date("2026-10-20T13:59:59Z").getTime());
+  await schedule(env);
+  assert.equal(mail.length, 0);
+  t.mock.timers.setTime(new Date("2026-10-20T14:00:00Z").getTime());
+  await Promise.all([schedule(env), schedule(env)]);
+  assert.deepEqual(
+    mail.map((m) => m.to[0]).sort(),
+    people.slice(2).map((p) => p.email),
+  );
+  assert(mail.every((m) => m.key.includes(":remind-tuesday:")));
+  await schedule(env);
+  assert.equal(mail.length, 3);
+  await save(2);
+  mail = [];
+  t.mock.timers.setTime(new Date("2026-10-21T13:59:59Z").getTime());
+  await schedule(env);
+  assert.equal(mail.length, 0);
+  t.mock.timers.setTime(new Date("2026-10-21T14:00:00Z").getTime());
+  await schedule(env);
+  assert.deepEqual(
+    mail.map((m) => m.to[0]).sort(),
+    [env.ADMIN_EMAIL, people[3].email, people[4].email].sort(),
+  );
+  assert(mail.every((m) => m.key.includes(":remind:")));
+  await schedule(env);
+  assert.equal(mail.length, 3);
+});
+test("Tuesday retries skip submitted responses and expire before Wednesday's reminder", async (t) => {
+  t.mock.timers.enable({
+    apis: ["Date"],
+    now: new Date("2026-10-20T14:00:00Z"),
+  });
+  env.MAIL_MODE = "live";
+  await unpause();
+  fail = true;
+  await schedule(env);
+  await save(0, [], true);
+  mail = [];
+  fail = false;
+  await env.DB.prepare("UPDATE deliveries SET next_at='2000-01-01'").run();
+  await drain(env);
+  assert(!mail.some((m) => m.key.endsWith(":remind-tuesday:p0")));
+  // Simulate an uncertain Tuesday delivery becoming due just as Wednesday starts.
+  await env.DB.prepare(
+    "UPDATE deliveries SET state='pending',first_attempt_at=NULL,next_at='2000-01-01' WHERE id=?",
+  )
+    .bind("2026-10-23:remind-tuesday:p1")
+    .run();
+  mail = [];
+  t.mock.timers.setTime(new Date("2026-10-21T14:00:00Z").getTime());
+  await schedule(env);
+  assert(!mail.some((m) => m.key.includes(":remind-tuesday:")));
+  assert.equal(
+    (
+      await env.DB.prepare("SELECT state FROM deliveries WHERE id=?")
+        .bind("2026-10-23:remind-tuesday:p1")
+        .first()
+    ).state,
+    "skipped",
   );
 });
 test("scheduled launch blocks every live sending path until Monday and starts the correct Friday once", async (t) => {

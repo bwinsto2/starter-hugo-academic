@@ -46,6 +46,11 @@ async function load() {
     for (const p of data.people) {
       const li = document.createElement("li");
       li.textContent = `${p.name}: ${p.submitted ? (p.unavailable ? "Unavailable all day" : "Submitted") : "Missing"}${p.updatedAt ? " · " + new Date(p.updatedAt).toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" }) : ""}`;
+      if (p.comment) {
+        const comment = document.createElement("p");
+        comment.textContent = p.comment;
+        li.append(comment);
+      }
       $("people").append(li);
     }
     $("deliveries").replaceChildren();

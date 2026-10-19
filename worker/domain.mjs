@@ -51,9 +51,15 @@ export function validateResponse(body) {
     throw new Error(
       "Select availability or explicitly choose Unavailable all day.",
     );
+  if (
+    body.comment !== undefined &&
+    (typeof body.comment !== "string" || body.comment.length > 500)
+  )
+    throw new Error("Keep your comment to 500 characters or fewer.");
   return {
     slots: [...body.slots].sort((a, b) => a - b),
     unavailable: body.unavailable,
+    comment: (body.comment || "").trim(),
   };
 }
 export function heatmap(people, responses) {
@@ -77,6 +83,8 @@ export function dueJobs(now) {
   const elapsed = day === 0 ? -1 : day;
   return {
     invitations: elapsed > 1 || (elapsed === 1 && minute >= 540),
+    // Don't catch up Tuesday's reminder on Wednesday and send two at once.
+    tuesdayReminders: elapsed === 2 && minute >= 600,
     reminders: elapsed > 3 || (elapsed === 3 && minute >= 600),
   };
 }

@@ -123,7 +123,7 @@ async function snapshot(env, friday, who = null, isAdmin = false) {
   const responses = await rows(
     q(
       env,
-      "SELECT r.* FROM responses r JOIN participants p ON p.id=r.participant_id WHERE r.friday=? AND p.active=1",
+      "SELECT r.*,COALESCE(c.comment,'') AS comment FROM responses r JOIN participants p ON p.id=r.participant_id LEFT JOIN response_comments c ON c.friday=r.friday AND c.participant_id=r.participant_id WHERE r.friday=? AND p.active=1",
       friday,
     ),
   );
@@ -141,6 +141,7 @@ async function snapshot(env, friday, who = null, isAdmin = false) {
         ...p,
         submitted: !!r,
         unavailable: !!r?.unavailable,
+        comment: r?.comment || "",
         updatedAt: r?.updated_at || null,
       };
     }),
@@ -155,6 +156,7 @@ async function snapshot(env, friday, who = null, isAdmin = false) {
               .map((r) => ({
                 slots: JSON.parse(r.slots),
                 unavailable: !!r.unavailable,
+                comment: r.comment,
                 updatedAt: r.updated_at,
               }))[0] || null,
         }
@@ -261,7 +263,13 @@ export async function schedule(env, now = new Date()) {
         people.map((p) => p.id),
       ),
     );
-  if (due.reminders) {
+  for (const [isDue, suffix, includeAdmin] of [
+    [due.tuesdayReminders, "remind-tuesday", false],
+    // Preserve the existing Wednesday delivery IDs and receipts.
+    [due.reminders, "remind", true],
+  ]) {
+    if (!isDue) continue;
+    const jobId = `${friday}:${suffix}`;
     const missing = await rows(
       q(
         env,
@@ -269,12 +277,12 @@ export async function schedule(env, now = new Date()) {
         friday,
       ),
     );
-    // Create one reminder job per week even if nobody is missing.
-    await env.DB.batch(
-      jobStatements(env, `${friday}:remind`, friday, "remind", []),
-    );
+    // Each day's reminder has its own durable recipient snapshot.
+    await env.DB.batch(jobStatements(env, jobId, friday, "remind", []));
     // Only enqueue once: a transaction records its recipient snapshot with the marker.
-    const marker = `${friday}:reminder-snapshot`;
+    const marker = includeAdmin
+      ? `${friday}:reminder-snapshot`
+      : `${jobId}:snapshot`;
     const statements = [
       q(
         env,
@@ -288,14 +296,14 @@ export async function schedule(env, now = new Date()) {
     // WHERE NOT EXISTS uses a delivery marker, inserted last, to make this atomic across cron retries.
     for (const p of [
       ...missing.map((p) => p.id),
-      ...(missing.length ? [null] : []),
+      ...(includeAdmin && missing.length ? [null] : []),
     ])
       statements.push(
         q(
           env,
           `INSERT OR IGNORE INTO deliveries(id,job_id,participant_id,kind,next_at) SELECT ?,?,?,?,? WHERE NOT EXISTS(SELECT 1 FROM deliveries WHERE id=?)`,
-          `${friday}:remind:${p || "admin"}`,
-          `${friday}:remind`,
+          `${jobId}:${p || "admin"}`,
+          jobId,
           p,
           p ? "remind" : "status",
           iso(),
@@ -350,6 +358,11 @@ async function mailContent(env, d) {
   if (d.kind === "invite" && job.friday !== currentFriday()) return null;
   if (["remind", "status"].includes(d.kind)) {
     if (job.friday !== currentFriday()) return null;
+    if (
+      job.id === `${job.friday}:remind-tuesday` &&
+      dueJobs(new Date()).reminders
+    )
+      return null;
     if (
       p &&
       (await q(
@@ -678,15 +691,24 @@ async function api(req, env, ctx, url) {
       throw new HttpError(400, e.message);
     }
     await ensureWeek(env, b.friday);
-    await q(
-      env,
-      `INSERT INTO responses VALUES (?,?,?,?,?) ON CONFLICT(friday,participant_id) DO UPDATE SET slots=excluded.slots,unavailable=excluded.unavailable,updated_at=excluded.updated_at`,
-      b.friday,
-      p.id,
-      JSON.stringify(response.slots),
-      +response.unavailable,
-      iso(),
-    ).run();
+    await env.DB.batch([
+      q(
+        env,
+        `INSERT INTO responses(friday,participant_id,slots,unavailable,updated_at) VALUES (?,?,?,?,?) ON CONFLICT(friday,participant_id) DO UPDATE SET slots=excluded.slots,unavailable=excluded.unavailable,updated_at=excluded.updated_at`,
+        b.friday,
+        p.id,
+        JSON.stringify(response.slots),
+        +response.unavailable,
+        iso(),
+      ),
+      q(
+        env,
+        `INSERT INTO response_comments(friday,participant_id,comment) VALUES (?,?,?) ON CONFLICT(friday,participant_id) DO UPDATE SET comment=excluded.comment`,
+        b.friday,
+        p.id,
+        response.comment,
+      ),
+    ]);
     await queueCompletion(env, b.friday);
     ctx.waitUntil(drain(env));
     return json(await snapshot(env, b.friday, p));

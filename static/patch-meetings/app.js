@@ -77,6 +77,7 @@ function paint() {
   $("save").disabled = !canEdit() || (!selected.size && !unavailable);
   $("clear").disabled = !canEdit();
   $("unavailable").disabled = !canEdit();
+  $("comment").disabled = !canEdit();
   if (lastSlot !== null) detail(lastSlot);
 }
 function change(i, on) {
@@ -93,6 +94,7 @@ function render(data, initialLoad = false) {
   if (initialLoad) {
     selected = new Set(data.me?.response?.slots || []);
     unavailable = !!data.me?.response?.unavailable;
+    $("comment").value = data.me?.response?.comment || "";
     ready = true;
   }
   $("date").textContent = new Intl.DateTimeFormat("en-US", {
@@ -144,6 +146,12 @@ function render(data, initialLoad = false) {
         : "Saved"
       : "Waiting";
     li.append(name, status);
+    if (p.comment) {
+      const comment = document.createElement("p");
+      comment.className = "saved-comment";
+      comment.textContent = p.comment;
+      li.append(comment);
+    }
     list.append(li);
   }
   paint();
@@ -245,6 +253,10 @@ $("clear").addEventListener("click", () => {
   $("save-status").textContent = "Select times or choose Unavailable all day.";
   paint();
 });
+$("comment").addEventListener("input", () => {
+  dirty = true;
+  $("save-status").textContent = "Unsaved changes";
+});
 $("save").addEventListener("click", async () => {
   if (!canEdit()) return;
   saving = true;
@@ -258,9 +270,11 @@ $("save").addEventListener("click", async () => {
         friday: state.friday,
         slots: [...selected],
         unavailable,
+        comment: $("comment").value,
       }),
     });
     dirty = false;
+    $("comment").value = data.me.response.comment;
     render(data);
     $("save-status").textContent = "Saved. Thank you.";
   } catch (e) {
