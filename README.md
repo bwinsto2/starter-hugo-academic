@@ -4,8 +4,8 @@ This repository deploys **both** brianwinston.com and its live PATCH scheduling
 Worker. Read [the production notes](AGENTS.md) and
 [PATCH operations](docs/patch-meetings.md) before publishing even a small website
 edit. An assets-only deployment overwrites the scheduler and removes its bindings.
-Until PR #1 is merged, use the complete `feature/patch-meetings` source; the old
-`main` checkout does not include the live scheduler. Preserve the required-secret
+Use an up-to-date `main` checkout containing PR #1, or a branch based on it.
+Older checkouts do not include the live scheduler. Preserve the required-secret
 checks in `wrangler.toml` and verify the API, bindings and cron after publishing.
 
 # [Hugo Academic Theme](https://github.com/wowchemy/starter-hugo-academic)

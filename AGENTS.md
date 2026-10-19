@@ -8,9 +8,9 @@ This happened on October 17, 2026 and prevented the first Monday invitations.
   and contact edits. Preserve `worker/index.mjs`, the ASSETS and DB bindings,
   PATCH routing, cron, mail settings and all six required secrets in
   `wrangler.toml`.
-- Until PR #1 is merged, production scheduler code is on
-  `feature/patch-meetings`; the older `main` checkout cannot safely deploy this
-  Worker. Do not deploy an old checkout or use `wrangler deploy --assets`.
+- Deploy from an up-to-date `main` checkout containing PR #1, or a branch based
+  on it. Older checkouts lack the live scheduler. Do not deploy an old checkout
+  or use `wrangler deploy --assets`.
 - After a deployment, verify `/api/patch/week` returns the current Friday and
   roster, authenticated admin status works, all six secret names remain present,
   and `*/15 * * * *` remains installed. A successful asset upload alone does not
