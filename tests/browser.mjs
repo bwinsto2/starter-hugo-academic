@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import { Miniflare } from "miniflare";
 import worker, { personalToken } from "../worker/index.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
+const originalFetch = globalThis.fetch;
 const mf = new Miniflare({
   modules: true,
   script: 'export default {fetch(){return new Response("test")}}',
@@ -292,11 +293,87 @@ try {
   assert(
     (await page.locator("#summary").textContent()).includes("Scheduled start:"),
   );
+  assert.equal(await page.locator("#remind").isDisabled(), true);
+  delete env.MAIL_START_AT;
+  await page.evaluate(() => load());
+  assert.equal(await page.locator("#remind").isDisabled(), true); // paused
+  env.RESEND_API_KEY = "browser-fixture-only";
+  env.MAIL_FROM = "PATCH <patch@example.invalid>";
+  env.ADMIN_EMAIL = env.REPLY_TO = "admin@example.invalid";
+  const reminders = [];
+  globalThis.fetch = async (address, options) => {
+    assert.equal(address, "https://api.resend.com/emails");
+    reminders.push(JSON.parse(options.body));
+    return new Response(JSON.stringify({ id: "browser-" + reminders.length }));
+  };
+  await DB.prepare(
+    "UPDATE settings SET value='false' WHERE key='mail_paused'",
+  ).run();
+  await page.evaluate(() => load());
+  assert.equal(await page.locator("#remind").isDisabled(), false);
+  const preview = await page.locator("#reminder-preview").textContent();
+  assert(
+    preview.includes("Person 0") && !preview.includes('Josh "Handsome" Bloch'),
+  );
+  const attempts = [];
+  await page.route("**/api/patch/admin/remind", async (route) => {
+    attempts.push(route.request().postDataJSON());
+    const result = await route.fetch();
+    if (attempts.length === 1) {
+      // The send succeeds, but its browser response is lost. Retry the same batch.
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Fixture connection error" }),
+      });
+    } else await route.fulfill({ response: result });
+  });
+  await page.locator("#remind").click();
+  await page
+    .locator("#reminder-status")
+    .filter({ hasText: "Fixture connection error" })
+    .waitFor();
+  await page.locator("#remind").click();
+  await page
+    .locator("#reminder-status")
+    .filter({ hasText: "Reminder batch queued" })
+    .waitFor();
+  await page.waitForFunction(async () => {
+    await load();
+    return (
+      Array.from(document.querySelectorAll("#deliveries tr")).filter((tr) =>
+        tr.textContent.includes("sent"),
+      ).length === 4
+    );
+  });
+  assert.equal(reminders.length, 4);
+  assert.deepEqual(attempts[0], attempts[1]);
+  assert(reminders.every((m) => m.to[0] !== "p1@example.invalid"));
+  assert(
+    reminders.every((m) =>
+      m.text.includes('Josh "Handsome" Bloch has submitted availability'),
+    ),
+  );
+  await page.screenshot({
+    path: "work/patch-admin-reminders.png",
+    fullPage: true,
+  });
+  await page.goto(
+    "http://localhost:8789/patch-meetings/admin/?week=2026-01-02",
+  );
+  await page.locator("#credential").fill(env.ADMIN_TOKEN);
+  await page.getByRole("button", { name: "View status" }).click();
+  await page
+    .locator("#reminder-preview")
+    .filter({ hasText: "Historical week" })
+    .waitFor();
+  assert.equal(await page.locator("#remind").isDisabled(), true);
   assert.deepEqual(errors, []);
   console.log(
-    "PASS: one-screen layout at 8 desktop/phone sizes, separate personal/group grids, hover details, drag/keyboard, failed save retention, save/edit/reload, unavailable, touch, historical and admin. No real emails sent.",
+    "PASS: compact desktop/phone layout, participant save/comment flows, historical/admin views, manual-reminder preview/targeting, paused/start/history controls and retry after a lost response. No real emails sent.",
   );
 } finally {
+  globalThis.fetch = originalFetch;
   await browser.close();
   await new Promise((r) => server.close(r));
   await mf.dispose();

@@ -1,6 +1,26 @@
 const $ = (id) => document.getElementById(id);
 let credential = "",
-  paused = true;
+  paused = true,
+  current = null,
+  sending = false,
+  reminderRequest = null;
+function reminderControls() {
+  const missing = current?.people.filter((p) => !p.submitted) || [];
+  $("remind").disabled =
+    sending ||
+    !current ||
+    current.readOnly ||
+    current.mailMode !== "live" ||
+    current.mailPaused ||
+    current.mailWaitingToStart ||
+    !missing.length;
+  $("remind").textContent = sending ? "Sending…" : "Send reminders";
+  $("reminder-preview").textContent = current?.readOnly
+    ? "Historical week. Open the current week to send reminders."
+    : !missing.length
+      ? "Everyone has responded. No reminders needed."
+      : `Send to: ${missing.map((p) => p.name).join(", ")}. Each email names those who have already responded and includes the recipient’s personal link.`;
+}
 async function api(path, body) {
   const r = await fetch("/api/patch/admin" + path, {
     method: body ? "POST" : "GET",
@@ -24,6 +44,8 @@ async function load() {
           : "",
       );
     $("admin-results").hidden = false;
+    current = data;
+    reminderControls();
     $("status").textContent = "";
     $("date").textContent = data.friday + " · Friday (Eastern)";
     $("summary").textContent =
@@ -87,6 +109,32 @@ $("pause").addEventListener("click", async () => {
     await load();
   } catch (e) {
     $("status").textContent = e.message;
+  }
+});
+$("remind").addEventListener("click", async () => {
+  if ($("remind").disabled) return;
+  sending = true;
+  // Retain the same ID on a network error, so retrying cannot send a second batch.
+  if (!reminderRequest || reminderRequest.friday !== current.friday)
+    reminderRequest = {
+      friday: current.friday,
+      requestId: crypto.randomUUID(),
+    };
+  reminderControls();
+  $("reminder-status").textContent = "Queuing reminders…";
+  try {
+    const result = await api("/remind", reminderRequest);
+    reminderRequest = null;
+    $("reminder-status").textContent = result.recipients.length
+      ? `Reminder batch queued for: ${result.recipients.map((p) => p.name).join(", ")}. Check the delivery log below for sending status.`
+      : "Everyone has responded. No reminders sent.";
+    await load();
+  } catch (e) {
+    $("reminder-status").textContent =
+      `${e.message} You can retry this request without duplicating its reminders.`;
+  } finally {
+    sending = false;
+    reminderControls();
   }
 });
 setInterval(() => {

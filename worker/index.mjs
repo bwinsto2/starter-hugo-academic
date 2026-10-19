@@ -401,8 +401,25 @@ async function mailContent(env, d) {
   } else if (d.kind === "complete") {
     subject = `PATCH: everyone responded for ${date}`;
     text = `Everyone has submitted availability for ${date}, including any all-day-unavailable responses.\n\nResults: ${link}`;
+  } else if (d.kind === "remind") {
+    const responded = await rows(
+      q(
+        env,
+        "SELECT name FROM participants p WHERE active=1 AND EXISTS(SELECT 1 FROM responses r WHERE r.friday=? AND r.participant_id=p.id) ORDER BY name",
+        job.friday,
+      ),
+    );
+    const names = new Intl.ListFormat("en-US", {
+      style: "long",
+      type: "conjunction",
+    }).format(responded.map((p) => p.name));
+    const progress = responded.length
+      ? `${names} ${responded.length === 1 ? "has" : "have"} submitted availability for ${date}.`
+      : `No one has submitted availability for ${date} yet.`;
+    subject = `PATCH reminder: ${date}`;
+    text = `Hi ${p.name},\n\n${progress}\n\nPlease share yours here:\n${link}\n\nChoose times between 8:00 AM and 6:00 PM Eastern (America/New_York), or select Unavailable all day.\n\nPlease keep this link private. Reply to Brian with any questions.`;
   } else {
-    text = `Hi ${p.name},\n\n${d.kind === "remind" ? "Reminder: please" : "Please"} submit your PATCH study team availability for ${date}, 8:00 AM–6:00 PM Eastern time (America/New_York). Your personal link lets you submit and edit your availability each week.\n\n${link}\n\nPlease keep this link private. Reply to Brian with any questions.`;
+    text = `Hi ${p.name},\n\nPlease submit your PATCH study team availability for ${date}, 8:00 AM–6:00 PM Eastern time (America/New_York). Your personal link lets you submit and edit your availability each week.\n\n${link}\n\nPlease keep this link private. Reply to Brian with any questions.`;
   }
   return {
     from: env.MAIL_FROM,
@@ -516,6 +533,65 @@ async function api(req, env, ctx, url) {
     if (path === "/api/patch/admin/run") {
       await schedule(env);
       return json({ ok: true });
+    }
+    if (path === "/api/patch/admin/remind") {
+      const friday = currentFriday();
+      if (b.friday !== friday)
+        throw new HttpError(
+          409,
+          "Open the current week before sending reminders.",
+        );
+      if (
+        typeof b.requestId !== "string" ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+          b.requestId,
+        )
+      )
+        throw new HttpError(400, "A reminder request ID is required.");
+      if (
+        env.MAIL_MODE !== "live" ||
+        !liveMailStarted(env) ||
+        (await paused(env))
+      )
+        throw new HttpError(
+          409,
+          "Reminders are unavailable while mail is paused, disabled or waiting to start.",
+        );
+      const jobId = `${friday}:manual-remind:${b.requestId}`;
+      const marker = `${jobId}:marker:recipients`;
+      // Record recipients and a marker atomically. Retrying the same action cannot
+      // add recipients or resend accepted deliveries, even across concurrent requests.
+      await env.DB.batch([
+        ...jobStatements(env, jobId, friday, "remind", []),
+        q(
+          env,
+          `INSERT OR IGNORE INTO deliveries(id,job_id,participant_id,kind,next_at)
+           SELECT ? || ':' || p.id,?,p.id,'remind',? FROM participants p
+           WHERE p.active=1 AND NOT EXISTS(SELECT 1 FROM responses r WHERE r.friday=? AND r.participant_id=p.id)
+           AND NOT EXISTS(SELECT 1 FROM deliveries WHERE id=?)`,
+          jobId,
+          jobId,
+          iso(),
+          friday,
+          marker,
+        ),
+        q(
+          env,
+          "INSERT OR IGNORE INTO deliveries(id,job_id,kind,state,next_at) VALUES (?,?,'marker','skipped',?)",
+          marker,
+          jobId,
+          iso(),
+        ),
+      ]);
+      ctx.waitUntil(drain(env));
+      const recipients = await rows(
+        q(
+          env,
+          "SELECT p.name,d.state FROM deliveries d JOIN participants p ON p.id=d.participant_id WHERE d.job_id=? ORDER BY p.name",
+          jobId,
+        ),
+      );
+      return json({ ok: true, recipients });
     }
     if (path === "/api/patch/admin/roster") {
       if (!Array.isArray(b.people) || b.people.length !== 5)
